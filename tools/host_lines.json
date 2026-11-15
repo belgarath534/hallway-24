@@ -1,0 +1,602 @@
+[
+  {
+    "heart" : "Hi! Welcome to Hallway twenty four! I'm Heart, your host, and I'm so happy you're here. Stay with me for twenty four hours. Every hour, you pick a door!",
+    "id" : "intro_1",
+    "lewis" : "Good evening, and welcome to Hallway twenty four. I'm Lewis, your host. The rules are simple. Stay for twenty four hours. Every hour, you choose a door."
+  },
+  {
+    "heart" : "Listen first, okay? Every door makes a little sound. Bells, keys and dishes are nice rooms. Dripping, buzzing and scratching are… less nice.",
+    "id" : "intro_2",
+    "lewis" : "Before you choose, listen. Each door makes a sound. Bells, keys and dishes are usually lovely. Dripping, buzzing and scratching… usually are not."
+  },
+  {
+    "heart" : "Pick left or right. You can listen again anytime. If something finds you, I'll tell you what to do, one time, so listen carefully! You've got this. Probably.",
+    "id" : "intro_3",
+    "lewis" : "Choose the left door or the right door. Listen again whenever you like. If something finds you, I'll tell you what to do. Once. Do try to keep up."
+  },
+  {
+    "heart" : "You have three hearts. If you lose them all, you stay here forever! With me! Okay, here we go!",
+    "id" : "intro_4",
+    "lewis" : "You have three hearts. Lose them all and the hallway keeps you. Now then. Let us begin."
+  },
+  {
+    "heart" : "You're back! I knew you'd come back. Nobody ever really leaves. Let's keep going!",
+    "id" : "welcome_back",
+    "lewis" : "Ah. You came back. Of course you did. Let's continue."
+  },
+  {
+    "heart" : "A brand new night! I moved all the doors around for you!",
+    "id" : "new_run",
+    "lewis" : "A fresh start. The hallway has been rearranged."
+  },
+  {
+    "heart" : "Hour one!",
+    "id" : "hour_1",
+    "lewis" : "Hour one."
+  },
+  {
+    "heart" : "Hour two!",
+    "id" : "hour_2",
+    "lewis" : "Hour two."
+  },
+  {
+    "heart" : "Hour three!",
+    "id" : "hour_3",
+    "lewis" : "Hour three."
+  },
+  {
+    "heart" : "Hour four!",
+    "id" : "hour_4",
+    "lewis" : "Hour four."
+  },
+  {
+    "heart" : "Hour five!",
+    "id" : "hour_5",
+    "lewis" : "Hour five."
+  },
+  {
+    "heart" : "Hour six! A quarter done! I'm so proud of you!",
+    "id" : "hour_6",
+    "lewis" : "Hour six. A quarter of the way. Not bad."
+  },
+  {
+    "heart" : "Hour seven!",
+    "id" : "hour_7",
+    "lewis" : "Hour seven."
+  },
+  {
+    "heart" : "Hour eight!",
+    "id" : "hour_8",
+    "lewis" : "Hour eight."
+  },
+  {
+    "heart" : "Hour nine!",
+    "id" : "hour_9",
+    "lewis" : "Hour nine."
+  },
+  {
+    "heart" : "Hour ten!",
+    "id" : "hour_10",
+    "lewis" : "Hour ten."
+  },
+  {
+    "heart" : "Hour eleven!",
+    "id" : "hour_11",
+    "lewis" : "Hour eleven."
+  },
+  {
+    "heart" : "Hour twelve! Halfway! Most people never get this far. You're special.",
+    "id" : "hour_12",
+    "lewis" : "Hour twelve. Halfway. Most guests don't see this hour."
+  },
+  {
+    "heart" : "Hour thirteen!",
+    "id" : "hour_13",
+    "lewis" : "Hour thirteen."
+  },
+  {
+    "heart" : "Hour fourteen!",
+    "id" : "hour_14",
+    "lewis" : "Hour fourteen."
+  },
+  {
+    "heart" : "Hour fifteen!",
+    "id" : "hour_15",
+    "lewis" : "Hour fifteen."
+  },
+  {
+    "heart" : "Hour sixteen!",
+    "id" : "hour_16",
+    "lewis" : "Hour sixteen."
+  },
+  {
+    "heart" : "Hour seventeen!",
+    "id" : "hour_17",
+    "lewis" : "Hour seventeen."
+  },
+  {
+    "heart" : "Hour eighteen! The hallway is getting hungry. Don't worry. It's not hungry for me.",
+    "id" : "hour_18",
+    "lewis" : "Hour eighteen. The hallway is getting… hungry."
+  },
+  {
+    "heart" : "Hour nineteen!",
+    "id" : "hour_19",
+    "lewis" : "Hour nineteen."
+  },
+  {
+    "heart" : "Hour twenty!",
+    "id" : "hour_20",
+    "lewis" : "Hour twenty."
+  },
+  {
+    "heart" : "Hour twenty one!",
+    "id" : "hour_21",
+    "lewis" : "Hour twenty one."
+  },
+  {
+    "heart" : "Hour twenty two!",
+    "id" : "hour_22",
+    "lewis" : "Hour twenty two."
+  },
+  {
+    "heart" : "Hour twenty three! Just one more after this. Please don't go. Just kidding! Unless?",
+    "id" : "hour_23",
+    "lewis" : "Hour twenty three. One more after this. I almost don't want you to go."
+  },
+  {
+    "heart" : "Hour twenty four! The very last door! Oh, I'm going to miss you.",
+    "id" : "hour_24",
+    "lewis" : "Hour twenty four. The last door. Make it count."
+  },
+  {
+    "heart" : "Two doors! Listen closely.",
+    "id" : "doors_1",
+    "lewis" : "Two doors. Listen."
+  },
+  {
+    "heart" : "Left or right? Listen!",
+    "id" : "doors_2",
+    "lewis" : "Left, or right. Listen carefully."
+  },
+  {
+    "heart" : "Ooh, I love these doors. Listen.",
+    "id" : "doors_3",
+    "lewis" : "Here are your doors."
+  },
+  {
+    "heart" : "Shh. Listen to what's behind them.",
+    "id" : "doors_4",
+    "lewis" : "Pay attention to what's behind them."
+  },
+  {
+    "heart" : "More doors! There are always more doors.",
+    "id" : "doors_5",
+    "lewis" : "Two more doors. They never end, you know."
+  },
+  {
+    "heart" : "Listen, then pick wisely! Or don't. It's more fun for me.",
+    "id" : "doors_6",
+    "lewis" : "Listen. And choose wisely."
+  },
+  {
+    "heart" : "Pick the left door or the right door. Or listen again!",
+    "id" : "doors_help",
+    "lewis" : "Choose the left door or the right door. Or listen again."
+  },
+  {
+    "heart" : "In you go!",
+    "id" : "open_1",
+    "lewis" : "In you go."
+  },
+  {
+    "heart" : "Ooh, brave!",
+    "id" : "open_2",
+    "lewis" : "Bold choice."
+  },
+  {
+    "heart" : "Let's see, let's see!",
+    "id" : "open_3",
+    "lewis" : "Let's see."
+  },
+  {
+    "heart" : "Oh, interesting!",
+    "id" : "open_4",
+    "lewis" : "Hmm. Interesting."
+  },
+  {
+    "heart" : "A cozy bedroom! Take a nap. You get a heart back!",
+    "id" : "room_bedroom_1",
+    "lewis" : "A bedroom. Have a rest. One heart back."
+  },
+  {
+    "heart" : "A soft little bed! Rest a bit. All better!",
+    "id" : "room_bedroom_2",
+    "lewis" : "A soft bed. Lie down for a moment. You feel better."
+  },
+  {
+    "heart" : "A bedroom! But you're already feeling great. Aww.",
+    "id" : "room_bedroom_full",
+    "lewis" : "A bedroom, but you're already rested. A shame to waste it."
+  },
+  {
+    "heart" : "A kitchen! There's a bandage in the drawer. It's yours!",
+    "id" : "room_kitchen_1",
+    "lewis" : "A kitchen. There's a bandage in the drawer. Take it."
+  },
+  {
+    "heart" : "The kitchen! Something smells, um, interesting. Here, a bandage!",
+    "id" : "room_kitchen_2",
+    "lewis" : "The kitchen. Something's cooking. Never mind what. There's a bandage by the sink."
+  },
+  {
+    "heart" : "The vault! Shiny tokens! Spend them in my shop!",
+    "id" : "room_vault_1",
+    "lewis" : "The vault. Tokens. Spend them in my shop."
+  },
+  {
+    "heart" : "Tokens everywhere! Grab them! I won't tell.",
+    "id" : "room_vault_2",
+    "lewis" : "Tokens on the floor. Nobody will miss them. Probably."
+  },
+  {
+    "heart" : "A storage closet! Ooh, you found something!",
+    "id" : "room_storage_1",
+    "lewis" : "A storage closet. You find something useful."
+  },
+  {
+    "heart" : "Lots of old boxes. And one of them has a present for you!",
+    "id" : "room_storage_2",
+    "lewis" : "Boxes. Old boxes. And in one of them, something for you."
+  },
+  {
+    "heart" : "An empty room! Nothing happens. Isn't that nice?",
+    "id" : "room_empty_1",
+    "lewis" : "An empty room. Nothing happens. Enjoy it."
+  },
+  {
+    "heart" : "Nothing in here! Just a chair facing the wall. Don't worry about the chair.",
+    "id" : "room_empty_2",
+    "lewis" : "Nothing here. Just a chair. Facing the wall. Don't ask."
+  },
+  {
+    "heart" : "So quiet! Too quiet? No, it's fine!",
+    "id" : "room_empty_3",
+    "lewis" : "Empty. Quiet. Suspiciously quiet."
+  },
+  {
+    "heart" : "A lighter!",
+    "id" : "found_lighter",
+    "lewis" : "A lighter."
+  },
+  {
+    "heart" : "A bandage!",
+    "id" : "found_bandage",
+    "lewis" : "A bandage."
+  },
+  {
+    "heart" : "A lucky charm! Lucky, lucky you!",
+    "id" : "found_charm",
+    "lewis" : "A lucky charm. Lucky you."
+  },
+  {
+    "heart" : "Two tokens!",
+    "id" : "tokens_2",
+    "lewis" : "Two tokens."
+  },
+  {
+    "heart" : "Three tokens!",
+    "id" : "tokens_3",
+    "lewis" : "Three tokens."
+  },
+  {
+    "heart" : "One token! Every token counts!",
+    "id" : "tokens_1",
+    "lewis" : "One token. Don't spend it all at once."
+  },
+  {
+    "heart" : "You flick the lighter and peek under the left door. There's",
+    "id" : "lighter_left",
+    "lewis" : "You light the lighter and peek under the left door. Behind it:"
+  },
+  {
+    "heart" : "And under the right door, there's",
+    "id" : "lighter_right",
+    "lewis" : "And under the right door:"
+  },
+  {
+    "heart" : "No lighter! You can buy one in my shop!",
+    "id" : "lighter_none",
+    "lewis" : "You don't have a lighter. My shop sells them."
+  },
+  {
+    "heart" : "a bed!",
+    "id" : "see_bedroom",
+    "lewis" : "a bed."
+  },
+  {
+    "heart" : "a kitchen!",
+    "id" : "see_kitchen",
+    "lewis" : "a kitchen."
+  },
+  {
+    "heart" : "something shiny!",
+    "id" : "see_vault",
+    "lewis" : "something shiny."
+  },
+  {
+    "heart" : "some boxes!",
+    "id" : "see_storage",
+    "lewis" : "boxes."
+  },
+  {
+    "heart" : "nothing at all!",
+    "id" : "see_empty",
+    "lewis" : "nothing at all."
+  },
+  {
+    "heart" : "a big puddle. It's growing!",
+    "id" : "see_drip",
+    "lewis" : "a puddle. Growing."
+  },
+  {
+    "heart" : "sparks! Zappy!",
+    "id" : "see_static",
+    "lewis" : "sparks."
+  },
+  {
+    "heart" : "scratch marks. Lots of them.",
+    "id" : "see_crawler",
+    "lewis" : "scratch marks."
+  },
+  {
+    "heart" : "someone sitting very, very still.",
+    "id" : "see_counter",
+    "lewis" : "someone sitting very still."
+  },
+  {
+    "heart" : "something pretending to be a room. Sneaky!",
+    "id" : "see_mimic",
+    "lewis" : "something pretending to be a room."
+  },
+  {
+    "heart" : "Uh oh, it's the Drip! Wait for the big splash, then swipe down to hide in the locker. Not too early!",
+    "id" : "learn_drip",
+    "lewis" : "Oh dear. The Drip. When the dripping speeds up and you hear the splash, swipe down to hide in the locker. Not before the splash."
+  },
+  {
+    "heart" : "It's Static! When you hear a buzz on one side, swipe the other way! Away from it! It keeps coming back!",
+    "id" : "learn_static",
+    "lewis" : "Static. A buzz will come from one side. Swipe the other way. Away from it. Several times."
+  },
+  {
+    "heart" : "The Crawler! If it growls, swipe up and run! If it sniffs, freeze! Don't run too early!",
+    "id" : "learn_crawler",
+    "lewis" : "The Crawler. Listen to the steps. If it growls, swipe up and run. If it sniffs, don't move at all. Don't run early."
+  },
+  {
+    "heart" : "It's the Counter! It counts down. Don't touch anything until it sighs and goes away. Nothing! Not even a little tap!",
+    "id" : "learn_counter",
+    "lewis" : "The Counter. It counts to zero. Don't touch anything until it sighs and leaves. Nothing at all."
+  },
+  {
+    "heart" : "The Mimic! Two voices, left and right. The lower one is the Mimic. Swipe toward the real one! Tap to hear them again.",
+    "id" : "learn_mimic",
+    "lewis" : "The Mimic. You'll hear two voices, left and right. The lower one is the Mimic. Swipe toward the real one. Tap to hear them again."
+  },
+  {
+    "heart" : "The Drip! Wait for the splash!",
+    "id" : "meet_drip",
+    "lewis" : "The Drip. Wait for the splash."
+  },
+  {
+    "heart" : "Static! Swipe away from the buzz!",
+    "id" : "meet_static",
+    "lewis" : "Static. Swipe away from the buzz."
+  },
+  {
+    "heart" : "The Crawler! Growl, run. Sniff, freeze!",
+    "id" : "meet_crawler",
+    "lewis" : "The Crawler. Growl means run. Sniff means freeze."
+  },
+  {
+    "heart" : "The Counter! Freeze!",
+    "id" : "meet_counter",
+    "lewis" : "The Counter. Don't move."
+  },
+  {
+    "heart" : "The Mimic! Find the real voice!",
+    "id" : "meet_mimic",
+    "lewis" : "The Mimic. Find the real voice."
+  },
+  {
+    "heart" : "Oops, too early! It heard the locker.",
+    "id" : "caught_drip_early",
+    "lewis" : "Too early. It heard the locker door."
+  },
+  {
+    "heart" : "Too slow! It found you.",
+    "id" : "caught_drip_late",
+    "lewis" : "Too late. It found you."
+  },
+  {
+    "heart" : "Zap! Away from the buzz, remember?",
+    "id" : "caught_static",
+    "lewis" : "The static got you. Away from the buzz, remember."
+  },
+  {
+    "heart" : "You ran too early! It chased you!",
+    "id" : "caught_crawler_early",
+    "lewis" : "You ran too soon. It chased you."
+  },
+  {
+    "heart" : "It growled! That means run!",
+    "id" : "caught_crawler_late",
+    "lewis" : "It growled. You should have run."
+  },
+  {
+    "heart" : "You moved! It heard you!",
+    "id" : "caught_crawler_moved",
+    "lewis" : "You moved. It heard you."
+  },
+  {
+    "heart" : "You moved! The Counter hates that.",
+    "id" : "caught_counter",
+    "lewis" : "You moved. The Counter doesn't like that."
+  },
+  {
+    "heart" : "Wrong one! That was the Mimic!",
+    "id" : "caught_mimic",
+    "lewis" : "Wrong voice. That was the Mimic."
+  },
+  {
+    "heart" : "You did it! I'm so proud!",
+    "id" : "survived_1",
+    "lewis" : "You survived. Well done."
+  },
+  {
+    "heart" : "Still alive! Yay!",
+    "id" : "survived_2",
+    "lewis" : "Still alive. Impressive."
+  },
+  {
+    "heart" : "It's gone! Bye bye!",
+    "id" : "survived_3",
+    "lewis" : "It's gone. For now."
+  },
+  {
+    "heart" : "Amazing! You're amazing!",
+    "id" : "survived_4",
+    "lewis" : "Nicely done. Truly."
+  },
+  {
+    "heart" : "You're so much better than the last guest!",
+    "id" : "survived_5",
+    "lewis" : "Hm. You're better at this than the last one."
+  },
+  {
+    "heart" : "Two hearts left! It's okay!",
+    "id" : "hurt_2",
+    "lewis" : "Two hearts left."
+  },
+  {
+    "heart" : "Only one heart left! Be careful, okay?",
+    "id" : "hurt_1",
+    "lewis" : "One heart left. Do be careful."
+  },
+  {
+    "heart" : "Your lucky charm broke instead of you! Lucky!",
+    "id" : "charm_saved",
+    "lewis" : "Your lucky charm breaks instead of you. Lucky."
+  },
+  {
+    "heart" : "Oh no! You're out of hearts. That means you stay here with me. Forever! Yay!",
+    "id" : "lose_1",
+    "lewis" : "And that's the end of you. Don't worry. The hallway will keep you safe. Forever."
+  },
+  {
+    "heart" : "No more hearts! Aww. Don't worry, I'll find a nice room for you.",
+    "id" : "lose_2",
+    "lewis" : "Out of hearts. A pity. You were doing so well. Well, you were doing."
+  },
+  {
+    "heart" : "You did it! Twenty four hours! The sun is up! You can go home! Come back soon, okay? Okay?",
+    "id" : "win_1",
+    "lewis" : "Twenty four hours. You actually did it. The sun is coming up. You may leave. This time."
+  },
+  {
+    "heart" : "It's morning! You survived the whole night! I'm so proud I could cry!",
+    "id" : "win_2",
+    "lewis" : "Dawn. You survived the night. I'm almost proud. Almost."
+  },
+  {
+    "heart" : "Welcome to my shop! Spend your tokens on something nice!",
+    "id" : "shop_welcome_1",
+    "lewis" : "Welcome to my little shop. Spend your tokens. Then back to the hallway."
+  },
+  {
+    "heart" : "Shop time! Everything's on sale! Not really, but it feels nice to say.",
+    "id" : "shop_welcome_2",
+    "lewis" : "The shop is open. Prices are fair. Mostly."
+  },
+  {
+    "heart" : "Great choice!",
+    "id" : "shop_buy_1",
+    "lewis" : "Excellent choice."
+  },
+  {
+    "heart" : "Ooh, good pick!",
+    "id" : "shop_buy_2",
+    "lewis" : "A wise purchase."
+  },
+  {
+    "heart" : "Not enough tokens! Sorry!",
+    "id" : "shop_poor",
+    "lewis" : "You can't afford that."
+  },
+  {
+    "heart" : "Bye for now! The hallway missed you!",
+    "id" : "shop_bye",
+    "lewis" : "Off you go, then. The hallway is waiting."
+  },
+  {
+    "heart" : "Bandage on! One heart back!",
+    "id" : "bandage_used",
+    "lewis" : "You wrap the bandage. One heart back."
+  },
+  {
+    "heart" : "You're not hurt! Save it for later!",
+    "id" : "bandage_full",
+    "lewis" : "You're not hurt. Save it."
+  },
+  {
+    "heart" : "You don't have a bandage!",
+    "id" : "bandage_none",
+    "lewis" : "You don't have a bandage."
+  },
+  {
+    "heart" : "Did you hear that? No? Okay, good!",
+    "id" : "tease_1",
+    "lewis" : "Did you hear that? No? Good."
+  },
+  {
+    "heart" : "The last guest picked left a lot! Just saying!",
+    "id" : "tease_2",
+    "lewis" : "The last guest picked left a lot. Just saying."
+  },
+  {
+    "heart" : "I love spending time with you!",
+    "id" : "tease_3",
+    "lewis" : "I do enjoy our time together."
+  },
+  {
+    "heart" : "Ignore the scratching! The walls do that sometimes.",
+    "id" : "tease_4",
+    "lewis" : "Don't mind the scratching. It's the walls. They do that."
+  },
+  {
+    "heart" : "You're so brave! Or so lost! Either way!",
+    "id" : "tease_5",
+    "lewis" : "You're very brave. Or very lost."
+  },
+  {
+    "heart" : "I moved some doors around. For fun!",
+    "id" : "tease_6",
+    "lewis" : "I've rearranged a few doors. For fun."
+  },
+  {
+    "heart" : "Nobody's made it this far in ages. I'm getting nervous. For you!",
+    "id" : "late_1",
+    "lewis" : "You know, nobody's made it this far in a while."
+  },
+  {
+    "heart" : "The doors are getting louder! Did you notice?",
+    "id" : "late_2",
+    "lewis" : "The doors are getting louder. Have you noticed?"
+  },
+  {
+    "heart" : "You don't really want to leave in the morning, do you?",
+    "id" : "late_3",
+    "lewis" : "Must you really leave in the morning?"
+  }
+]
