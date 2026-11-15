@@ -66,6 +66,11 @@ jobs:
           CLEAN=$(printf '%s' "$CERTS_REPO_TOKEN" | tr -d '[:space:]')
           echo "::add-mask::$CLEAN"
           echo "CLEAN_CERTS_TOKEN=$CLEAN" >> "$GITHUB_ENV"
+          # A space or new line pasted at the end of the password makes match fail: trim them.
+          PW=$(printf '%s' "$MATCH_PASSWORD" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+          echo "::add-mask::$PW"
+          if [ "$PW" != "$MATCH_PASSWORD" ]; then echo "⚠️ MATCH_PASSWORD had extra spaces or a new line at the start or end. Trimmed them."; fi
+          echo "MATCH_PASSWORD=$PW" >> "$GITHUB_ENV"
           exit $missing
 
       - name: Get key files from ios-certificates
