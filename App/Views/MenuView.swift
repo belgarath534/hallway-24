@@ -5,6 +5,8 @@ struct MenuView: View {
     @EnvironmentObject var settings: GameSettings
     @ObservedObject private var gameCenter = GameCenter.shared
     @State private var playing: PlayRequest?
+    @State private var showPractice = false
+    @ObservedObject private var launch = AppLaunch.shared
 
     struct PlayRequest: Identifiable {
         let id = UUID()
@@ -88,8 +90,18 @@ struct MenuView: View {
             }
             .scrollContentBackground(.hidden)
             .background(HallwayBackground())
+            .navigationDestination(isPresented: $showPractice) { PracticeView() }
         }
         .onAppear { SoundBoard.shared.music(.menu) }
+        // Siri, Shortcuts or the Action button opened the game.
+        .onReceive(launch.$request) { request in
+            guard let request, playing == nil else { return }
+            launch.request = nil
+            switch request {
+            case .night: playing = PlayRequest(resume: settings.savedRun)
+            case .practice: showPractice = true
+            }
+        }
         .fullScreenCover(item: $playing) { request in
             GameScreen(settings: settings, resume: request.resume) { playing = nil }
                 .environmentObject(settings)

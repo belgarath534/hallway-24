@@ -1,0 +1,8 @@
+/* Siri phrases in Portuguese. ${applicationName} is the app's name. */
+"Start a night in ${applicationName}" = "Começar uma noite no ${applicationName}";
+"Play ${applicationName}" = "Jogar ${applicationName}";
+"Continue my night in ${applicationName}" = "Continuar minha noite no ${applicationName}";
+"Open the practice room in ${applicationName}" = "Abrir a sala de treino no ${applicationName}";
+"Practice in ${applicationName}" = "Treinar no ${applicationName}";
+"What's my record in ${applicationName}" = "Qual é meu recorde no ${applicationName}";
+"How many nights have I survived in ${applicationName}" = "Quantas noites eu sobrevivi no ${applicationName}";

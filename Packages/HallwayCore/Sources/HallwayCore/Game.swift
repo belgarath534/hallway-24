@@ -505,7 +505,7 @@ public final class Game {
             trainingTries = Self.practiceRounds
         case let .caught(reason):
             trainingTries += 1
-            b += [.event(.play(SoundCue(.hit))), .event(.haptic(.warning)), .say(reason)]
+            b += [.event(.play(SoundCue(.hit))), .event(.haptic(.hit)), .say(reason)]
             if trainingTries < Self.practiceRounds {
                 b.append(.say(trainingTries == 1 ? "training_again_1" : "training_again_2"))
                 beats += b + nextRound(c)
@@ -540,7 +540,7 @@ public final class Game {
                 events.append(.achievement("practice"))
                 beats += [.event(.haptic(.success)), .event(.play(SoundCue(.survive))), .say(variant("survived")), .step(.practiceOver)]
             case let .caught(reason):
-                beats += [.event(.play(SoundCue(.hit))), .event(.haptic(.heavy)), .say(reason), .step(.practiceOver)]
+                beats += [.event(.play(SoundCue(.hit))), .event(.haptic(.hit)), .say(reason), .step(.practiceOver)]
             }
             return
         }
@@ -557,7 +557,7 @@ public final class Game {
                 beats += [.event(.haptic(.success)), .say(variant("survived")), .event(.caption("+\(n)")), .wait(0.3), .step(.finishRoom)]
             }
         case let .caught(reason):
-            var b: [Beat] = [.event(.play(SoundCue(.hit))), .event(.haptic(.heavy)), .say(reason)]
+            var b: [Beat] = [.event(.play(SoundCue(.hit))), .event(.haptic(.hit)), .say(reason)]
             if run.count(.charm) > 0 {
                 take(.charm)
                 b += [.event(.play(SoundCue(.charmBreak))), .say("charm_saved"), .step(.finishRoom)]

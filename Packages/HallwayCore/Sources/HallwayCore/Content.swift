@@ -309,6 +309,10 @@ public enum Track: String, Codable, CaseIterable, Sendable {
 
 public enum Haptic: String, Codable, Sendable {
     case light, heavy, warning, success, heartbeat
+    /// A creature lunges at you (the Crawler's growl, the Breather in your ear).
+    case rush
+    /// You were caught.
+    case hit
 }
 
 /// A sound to play now.
@@ -319,13 +323,17 @@ public struct SoundCue: Equatable, Sendable {
     public var rate: Double
     /// Heard through a closed door: quieter and dull.
     public var muffled: Bool
+    /// Behind you rather than in front (only heard as such with headphones and 3D sound).
+    /// Left and right stay the same, so the game plays the same either way.
+    public var behind: Bool
 
-    public init(_ sfx: Sfx, pan: Double = 0, volume: Double = 1, rate: Double = 1, muffled: Bool = false) {
+    public init(_ sfx: Sfx, pan: Double = 0, volume: Double = 1, rate: Double = 1, muffled: Bool = false, behind: Bool = false) {
         self.sfx = sfx
         self.pan = pan
         self.volume = volume
         self.rate = rate
         self.muffled = muffled
+        self.behind = behind
     }
 }
 

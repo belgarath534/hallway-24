@@ -1,0 +1,8 @@
+/* Names of the Siri and Shortcuts actions, in Portuguese. */
+"Start a Night" = "Começar uma Noite";
+"Open the Practice Room" = "Abrir a Sala de Treino";
+"Practice Room" = "Sala de Treino";
+"My Record" = "Meu Recorde";
+"Opens Hallway 24 and starts a night. If you saved a night, it continues that one." = "Abre o Hallway 24 e começa uma noite. Se você salvou uma noite, continua aquela.";
+"Opens the Practice Room, where you can practice any creature without losing hearts." = "Abre a Sala de Treino, onde você treina qualquer criatura sem perder corações.";
+"Siri tells you how many nights you've survived and how far you've gotten." = "A Siri diz quantas noites você sobreviveu e até onde você chegou.";

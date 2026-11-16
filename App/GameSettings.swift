@@ -17,6 +17,8 @@ final class GameSettings: ObservableObject {
     @Published var host: Host { didSet { defaults.set(host.rawValue, forKey: "host") } }
     @Published var hostChosen: Bool { didSet { defaults.set(hostChosen, forKey: "hostChosen") } }
     @Published var haptics: Bool { didSet { defaults.set(haptics, forKey: "haptics") } }
+    /// 3D sound with headphones (in front, behind, and head tracking with AirPods).
+    @Published var spatialSound: Bool { didSet { defaults.set(spatialSound, forKey: "spatialSound"); SoundBoard.shared.spatialWanted = spatialSound } }
     /// On-screen captions of sounds and of what the Host says.
     @Published var captions: Bool { didSet { defaults.set(captions, forKey: "captions") } }
     /// Off: the Host is spoken by the phone's own voice instead of the recordings.
@@ -49,6 +51,7 @@ final class GameSettings: ObservableObject {
         host = saved?.language == lang ? saved! : Host.all(lang)[0]
         hostChosen = defaults.bool(forKey: "hostChosen")
         haptics = defaults.object(forKey: "haptics") as? Bool ?? true
+        spatialSound = defaults.object(forKey: "spatialSound") as? Bool ?? true
         captions = defaults.object(forKey: "captions") as? Bool ?? true
         recordedHost = defaults.object(forKey: "recordedHost") as? Bool ?? true
         musicVolume = defaults.object(forKey: "musicVolume") as? Double ?? 0.6
@@ -80,6 +83,7 @@ final class GameSettings: ObservableObject {
         sound.musicVolume = musicVolume
         sound.ambienceVolume = ambienceVolume
         sound.effectsVolume = effectsVolume
+        sound.spatialWanted = spatialSound
     }
 
     func learn(_ c: Creature) {

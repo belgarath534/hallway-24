@@ -71,6 +71,16 @@ struct SettingsView: View {
                        "A voz do apresentador fica sempre no volume máximo. Abaixe os outros se algo estiver difícil de ouvir."))
             }
             Section {
+                Toggle(t("3D sound with headphones", "Som 3D com fones de ouvido"), isOn: $settings.spatialSound)
+                Button(t("Test 3D sound", "Testar som 3D")) { SoundBoard.shared.testSpatial() }
+                    .disabled(!settings.spatialSound)
+            } header: {
+                Text(t("Headphones", "Fones de ouvido"))
+            } footer: {
+                Text(t("With headphones, creatures can be in front of you or behind you, not just left and right. With AirPods that track your head, sounds stay in place when you turn your head. The test: a knock walks in a circle around you, starting in front, then stays in front so you can turn your head. Without headphones the game uses normal left and right.",
+                       "Com fones, as criaturas podem estar na sua frente ou atrás de você, não só à esquerda e à direita. Com AirPods que seguem a cabeça, os sons ficam no lugar quando você vira a cabeça. O teste: uma batida anda em círculo em volta de você, começando na frente, e depois fica na frente para você virar a cabeça. Sem fones o jogo usa esquerda e direita normais."))
+            }
+            Section {
                 Toggle(t("Vibration", "Vibração"), isOn: $settings.haptics)
                 Toggle(t("Captions on screen", "Legendas na tela"), isOn: $settings.captions)
                 Toggle(t("Recorded Host voice", "Voz gravada do apresentador"), isOn: $settings.recordedHost)

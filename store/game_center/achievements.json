@@ -48,6 +48,46 @@
   "points": 20
  },
  {
+  "id": "survive_neighbor",
+  "title": "Good Fences",
+  "title_pt": "Boa Vizinhança",
+  "detail": "Survive the Neighbor.",
+  "detail_pt": "Sobreviva ao Vizinho.",
+  "points": 20
+ },
+ {
+  "id": "survive_lullaby",
+  "title": "Sweet Dreams",
+  "title_pt": "Bons Sonhos",
+  "detail": "Survive the Lullaby.",
+  "detail_pt": "Sobreviva à Canção de Ninar.",
+  "points": 20
+ },
+ {
+  "id": "survive_breather",
+  "title": "Personal Space",
+  "title_pt": "Espaço Pessoal",
+  "detail": "Survive the Breather.",
+  "detail_pt": "Sobreviva ao Respirador.",
+  "points": 20
+ },
+ {
+  "id": "survive_twins",
+  "title": "First Voice",
+  "title_pt": "Primeira Voz",
+  "detail": "Survive the Twins.",
+  "detail_pt": "Sobreviva às Gêmeas.",
+  "points": 25
+ },
+ {
+  "id": "survive_lights",
+  "title": "Keep the Lights On",
+  "title_pt": "Luz Acesa",
+  "detail": "Survive the Lights.",
+  "detail_pt": "Sobreviva às Luzes.",
+  "points": 25
+ },
+ {
   "id": "solve_echo",
   "title": "Music Box",
   "title_pt": "Caixinha de Música",

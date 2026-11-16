@@ -258,7 +258,7 @@ public struct Encounter: Sendable {
             let growls = round == rounds - 1 || rng.chance(0.45)
             if growls {
                 at(t, .play(SoundCue(.growl)))
-                at(t, .haptic(.heavy))
+                at(t, .haptic(.rush))
                 at(t, .caption(t2("GROWL!", "GRRR!")))
                 rules.append(Rule(from: roundStart, to: t - 0.05, kind: .forbid([.up]), reason: "caught_crawler_early"))
                 rules.append(Rule(from: t - 0.05, to: t + window,
@@ -288,7 +288,7 @@ public struct Encounter: Sendable {
         let gap = 1.0 - 0.3 * d
         let start = 1.0
         for n in stride(from: 10, through: 1, by: -1) {
-            at(start + Double(10 - n) * gap, .play(SoundCue(.count(n), pan: rng.range(-0.3, 0.3))))
+            at(start + Double(10 - n) * gap, .play(SoundCue(.count(n), pan: rng.range(-0.3, 0.3), behind: true)))
         }
         at(start, .caption(t2("It starts counting…", "Ele começa a contar…")))
         let sigh = start + 9 * gap + gap * 1.3
@@ -562,14 +562,15 @@ public struct Encounter: Sendable {
             let breaths = rng.int(4, 6)
             for k in 0..<breaths {
                 t += 0.75 - 0.15 * d
-                let pan = circle[(start + k) % circle.count]
-                at(t, .play(SoundCue(.breath, pan: pan, volume: 0.3 + 0.5 * Double(k) / Double(breaths))))
+                let spot = (start + k) % circle.count
+                // The second half of the circle is behind you.
+                at(t, .play(SoundCue(.breath, pan: circle[spot], volume: 0.3 + 0.5 * Double(k) / Double(breaths), behind: spot > 4)))
             }
             start += breaths
             t += 0.6
             let side = rng.side()
             at(t, .play(SoundCue(.breathClose, pan: side == .left ? -1 : 1)))
-            at(t, .haptic(.heavy))
+            at(t, .haptic(.rush))
             at(t, .caption(side == .left ? t2("In your LEFT ear!", "No ouvido ESQUERDO!") : t2("In your RIGHT ear!", "No ouvido DIREITO!")))
             let toward: Input = side == .left ? .left : .right
             let away: Input = side == .left ? .right : .left

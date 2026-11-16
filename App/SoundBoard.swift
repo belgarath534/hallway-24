@@ -6,6 +6,11 @@ import HallwayCore
 ///
 /// Effects run through a small pool of voices: player → varispeed (the Mimic's lower voice) → low-pass
 /// filter (through a door) → mixer (left/right and volume).
+///
+/// With headphones and 3D sound on, each voice's mixer feeds a 3D space (AVAudioEnvironmentNode) instead:
+/// sounds come from a real direction, in front of you or behind you, and on iOS 18 with AirPods that
+/// support head tracking, they stay in place when you turn your head. Without headphones it's plain
+/// left/right, so the game always plays the same.
 @MainActor
 final class SoundBoard {
     static let shared = SoundBoard()
@@ -18,6 +23,11 @@ final class SoundBoard {
     }
 
     private let engine = AVAudioEngine()
+    private let space = AVAudioEnvironmentNode()
+    /// The player's choice (Settings). Only used while headphones are connected.
+    var spatialWanted = true { didSet { route() } }
+    /// Sounds are in 3D right now.
+    private(set) var spatialOn = false
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44100, channels: 1)!
     private var voices: [Voice] = []
     private var nextVoice = 0
@@ -52,12 +62,24 @@ final class SoundBoard {
             engine.connect(v.mixer, to: engine.mainMixerNode, format: format)
             voices.append(v)
         }
+        engine.attach(space)
+        engine.connect(space, to: engine.mainMixerNode, format: nil)
+        space.renderingAlgorithm = .auto
+        space.reverbParameters.enable = false
+        // No quieter with distance up close: the game sets volumes itself.
+        space.distanceAttenuationParameters.referenceDistance = 3
+        space.distanceAttenuationParameters.maximumDistance = 20
+        space.distanceAttenuationParameters.rolloffFactor = 0.6
         engine.attach(ambiencePlayer)
         engine.attach(ambienceMixer)
         engine.connect(ambiencePlayer, to: ambienceMixer, format: format)
         engine.connect(ambienceMixer, to: engine.mainMixerNode, format: format)
         load()
+        route()
         start()
+        NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.route() }
+        }
         NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.start() }
         }
@@ -71,6 +93,52 @@ final class SoundBoard {
                 }
             }
         }
+    }
+
+    /// Headphones of any kind: wired, Bluetooth (AirPods), USB.
+    private static var headphonesConnected: Bool {
+        AVAudioSession.sharedInstance().currentRoute.outputs.contains {
+            [.headphones, .bluetoothA2DP, .bluetoothLE, .bluetoothHFP, .usbAudio].contains($0.portType)
+        }
+    }
+
+    /// Sends the effects to the 3D space (headphones and 3D sound on) or straight to the speakers.
+    private func route() {
+        let spatial = spatialWanted && Self.headphonesConnected
+        if #available(iOS 18.0, *) {
+            space.isListenerHeadTrackingEnabled = spatial
+        }
+        guard spatial != spatialOn || !routed else { return }
+        routed = true
+        spatialOn = spatial
+        let wasRunning = engine.isRunning
+        if wasRunning {
+            stopEffects()
+            engine.stop()
+        }
+        for v in voices {
+            engine.disconnectNodeOutput(v.mixer)
+            if spatial {
+                engine.connect(v.mixer, to: space, format: format)
+                v.mixer.renderingAlgorithm = .auto
+                v.mixer.sourceMode = .spatializeIfMono
+                v.mixer.reverbBlend = 0
+            } else {
+                engine.connect(v.mixer, to: engine.mainMixerNode, format: format)
+            }
+        }
+        if wasRunning { start() }
+    }
+    private var routed = false
+
+    /// Where a sound is in the 3D space: the game's left/right as an angle, in front of you or behind you.
+    /// Through a door is a little further away.
+    private static func position(_ cue: SoundCue) -> AVAudio3DPoint {
+        let angle = max(-1, min(1, cue.pan)) * Double.pi / 2
+        let distance = cue.muffled ? 2.5 : 1.0
+        let x = sin(angle) * distance
+        let z = cos(angle) * distance * (cue.behind ? 1 : -1)   // the listener faces −z
+        return AVAudio3DPoint(x: Float(x), y: 0, z: Float(z))
     }
 
     private func start() {
@@ -128,10 +196,26 @@ final class SoundBoard {
         v.player.stop()
         v.speed.rate = Float(cue.rate)
         v.filter.bypass = !cue.muffled
-        v.mixer.pan = Float(max(-1, min(1, cue.pan)))
+        if spatialOn {
+            v.mixer.position = Self.position(cue)
+        } else {
+            v.mixer.pan = Float(max(-1, min(1, cue.pan)))
+        }
         v.mixer.outputVolume = Float(cue.volume * effectsVolume)
         v.player.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
         v.player.play()
+    }
+
+    /// Settings: a knock walks in a circle around your head, starting in front of you, then stays
+    /// in front so you can turn your head and hear it stay put.
+    func testSpatial() {
+        let path: [(Double, Bool)] = [(0, false), (0.5, false), (1, false), (0.5, true), (0, true), (-0.5, true), (-1, false), (-0.5, false)]
+        Task { @MainActor in
+            for (pan, behind) in path + Array(repeating: (0, false), count: 8) {
+                play(SoundCue(.neighborKnock, pan: pan, volume: 0.8, behind: behind))
+                try? await Task.sleep(nanoseconds: 700_000_000)
+            }
+        }
     }
 
     func stopEffects() {

@@ -4,6 +4,9 @@ Run by the "App Store" GitHub workflow. Adapted from the truck sim's. English an
   - Turns on Game Center for the app
   - Creates each achievement in game_center/achievements.json with its English text and picture
   - Creates the leaderboards (furthest hour, nights survived, creatures survived)
+  - Creates a challenge (iOS 26 Games app): "How far can you get?" on the furthest-hour leaderboard.
+    Friends challenge each other for a day, three days or a week. It goes to App Review with the next
+    version of the app; this script never submits anything.
 Things that already exist are left alone, except missing text or pictures, which are added.
 """
 import hashlib
@@ -167,7 +170,64 @@ for b in LEADERBOARDS:
         problems.append(f"Leaderboard {b['name']}: {e}")
         print("FAILED", b["name"], e)
 
+# ------------------------------------------------------------------ challenges (iOS 26)
+# New in 2025: if Apple's API refuses, it's reported as a warning and everything else still counts.
+CHALLENGES = [
+    {"vendor": "hallway24.challenge.furthest_hour", "reference": "How Far Can You Get",
+     "leaderboard": "hallway24.furthest_hour", "image": HERE / "challenge_furthest_hour.png",
+     "text": {"en-US": ("How Far Can You Get?", "Who gets furthest down the hallway? Survive as many hours as you can."),
+              "pt-BR": ("Até Onde Você Chega?", "Quem vai mais longe no corredor? Sobreviva ao máximo de horas que puder.")}},
+]
+warnings = []
+try:
+    boards = {b["attributes"]["vendorIdentifier"]: b
+              for b in all_pages(f"/gameCenterDetails/{detail_id}/gameCenterLeaderboards", limit=200)}
+    existing_ch = {c["attributes"].get("vendorIdentifier"): c
+                   for c in all_pages(f"/gameCenterDetails/{detail_id}/gameCenterChallenges", limit=200)}
+    for c in CHALLENGES:
+        if c["vendor"] in existing_ch:
+            ch_id = existing_ch[c["vendor"]]["id"]
+        else:
+            ch_id = call("POST", "/gameCenterChallenges", json={"data": {"type": "gameCenterChallenges",
+                         "attributes": {"referenceName": c["reference"], "vendorIdentifier": c["vendor"],
+                                        "challengeType": "LEADERBOARD", "repeatable": True,
+                                        "allowedDurations": ["ONE_DAY", "THREE_DAYS", "ONE_WEEK"]},
+                         "relationships": {"gameCenterDetail": rel("gameCenterDetails", detail_id),
+                                           "leaderboard": rel("gameCenterLeaderboards", boards[c["leaderboard"]]["id"])}}})["data"]["id"]
+            print("Created challenge", c["reference"])
+        versions = call("GET", f"/gameCenterChallenges/{ch_id}/versions")["data"]
+        if versions:
+            ver_id = versions[0]["id"]
+        else:
+            ver_id = call("POST", "/gameCenterChallengeVersions", json={"data": {"type": "gameCenterChallengeVersions",
+                          "relationships": {"challenge": rel("gameCenterChallenges", ch_id)}}})["data"]["id"]
+        locs = call("GET", f"/gameCenterChallengeVersions/{ver_id}/localizations")["data"]
+        for locale, (name, about) in c["text"].items():
+            if not any(l["attributes"]["locale"] == locale for l in locs):
+                call("POST", "/gameCenterChallengeLocalizations", json={"data": {"type": "gameCenterChallengeLocalizations",
+                     "attributes": {"locale": locale, "name": name, "description": about},
+                     "relationships": {"version": rel("gameCenterChallengeVersions", ver_id)}}})
+                print(f"  {locale} text added for", c["reference"])
+        image = call("GET", f"/gameCenterChallengeVersions/{ver_id}/defaultImage", ok404=True)
+        if not (image and image.get("data")):
+            upload("gameCenterChallengeImages", "version", "gameCenterChallengeVersions", ver_id, c["image"])
+            print("  picture uploaded for", c["reference"])
+        # Puts the challenge with the game, so it's reviewed with the next version (not a submission).
+        try:
+            call("POST", "/gameCenterChallengeVersionReleases", json={"data": {"type": "gameCenterChallengeVersionReleases",
+                 "relationships": {"gameCenterDetail": rel("gameCenterDetails", detail_id),
+                                   "version": rel("gameCenterChallengeVersions", ver_id)}}})
+            print("  ready to go out with the next version:", c["reference"])
+        except ApiError as e:
+            if "409" not in str(e):
+                raise
+except Exception as e:
+    warnings.append(f"Challenges: {e}")
+    print("WARNING (challenges)", e)
+
 print()
+for w in warnings:
+    print("Warning:", w)
 if problems:
     print("Problems:")
     for p in problems:
