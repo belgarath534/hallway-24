@@ -20,6 +20,9 @@ enum CreatureArt {
         case .staticBuzz:
             return l.t("Picture: a human-shaped creature made of flickering TV static floats above the floor of a run-down hallway with peeling wallpaper. Its body is striped with glitchy colored lines, and crackling blue electricity arcs all around it.",
                        "Imagem: uma criatura em forma de gente, feita de chiado de TV piscando, flutua acima do chão de um corredor velho com o papel de parede descascando. O corpo é cheio de listras coloridas com defeito, e eletricidade azul estala em volta dela toda.")
+        case .crawler:
+            return l.t("Picture: a pale, skinny creature creeps on four long bony legs down a run-down hallway with peeling wallpaper. You can see its ribs. It has a long thin tail, clawed feet, and it stretches its bald head forward with dark eyes, sniffing the air.",
+                       "Imagem: uma criatura pálida e magrela anda em quatro pernas longas e ossudas por um corredor velho de papel de parede descascando. Dá para ver as costelas. Tem um rabo comprido e fino, pés com garras, e estica a cabeça careca para a frente com olhos escuros, farejando o ar.")
         case .counter:
             return l.t("Picture: a very tall, thin, pale man in a dark suit and tie sits perfectly still on a wooden chair in an empty room. His sunken eyes stare down at his long bony fingers as he counts on them.",
                        "Imagem: um homem muito alto, magro e pálido, de terno escuro e gravata, sentado imóvel numa cadeira de madeira em uma sala vazia. Os olhos fundos olham para os dedos longos e ossudos enquanto ele conta neles.")
