@@ -26,6 +26,9 @@ enum CreatureArt {
         case .counter:
             return l.t("Picture: a very tall, thin, pale man in a dark suit and tie sits perfectly still on a wooden chair in an empty room. His sunken eyes stare down at his long bony fingers as he counts on them.",
                        "Imagem: um homem muito alto, magro e pálido, de terno escuro e gravata, sentado imóvel numa cadeira de madeira em uma sala vazia. Os olhos fundos olham para os dedos longos e ossudos enquanto ele conta neles.")
+        case .lights:
+            return l.t("Picture: a run-down hallway with peeling green and cream wallpaper and papers scattered on the wooden floor, lit by one bare bulb. An old wooden clock hangs on the right wall. At the far end, the hallway fades into darkness, and a pale shape seems to move in the shadows.",
+                       "Imagem: um corredor velho, com papel de parede verde e creme descascando e papéis espalhados no chão de madeira, iluminado por uma única lâmpada. Um relógio antigo de madeira está pendurado na parede da direita. Lá no fundo, o corredor some na escuridão, e uma forma pálida parece se mexer nas sombras.")
         case .mimic:
             return l.t("Picture: a dark creature peeks around a half-open wooden door. Its glowing yellow eyes and huge, too-wide grin full of teeth stare out, and one clawed hand grips the edge of the door.",
                        "Imagem: uma criatura escura espia por trás de uma porta de madeira entreaberta. Olhos amarelos brilhando e um sorriso enorme, largo demais, cheio de dentes. Uma mão com garras segura a beirada da porta.")
