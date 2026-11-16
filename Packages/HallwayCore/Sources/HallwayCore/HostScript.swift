@@ -8,14 +8,17 @@
 public enum Host: String, Codable, CaseIterable, Sendable {
     case lewis, heart, george, emma, rex, nicole, santa
     case alex, dora, noel
+    /// Lewis, speaking Portuguese (his own voice, copied by Chatterbox).
+    case lewisPT = "lewis_pt"
 
-    public var language: Language { [.alex, .dora, .noel].contains(self) ? .pt : .en }
+    public var language: Language { [.alex, .dora, .noel, .lewisPT].contains(self) ? .pt : .en }
 
     public static func all(_ l: Language) -> [Host] { allCases.filter { $0.language == l } }
 
     public var name: String {
         switch self {
         case .noel: return "Noel"
+        case .lewisPT: return "Lewis"
         default: return rawValue.prefix(1).uppercased() + rawValue.dropFirst()
         }
     }
@@ -32,6 +35,7 @@ public enum Host: String, Codable, CaseIterable, Sendable {
         case .alex: return "Um apresentador educado e calmo. Muito gentil. Gentil até demais."
         case .dora: return "Uma moça doce e animada. Ela tem tanto orgulho de você. Mesmo quando você escolhe a porta errada."
         case .noel: return "Um velhinho alegre demais, que acha graça de tudo que acontece com você. Ho ho ho."
+        case .lewisPT: return "O cavalheiro britânico, agora em português. Muito educado. Muito calmo. Calmo até demais."
         }
     }
 
@@ -48,6 +52,8 @@ public enum Host: String, Codable, CaseIterable, Sendable {
         case .alex: return ("pm_alex", 0.95, "pt-br")
         case .dora: return ("pf_dora", 0.97, "pt-br")
         case .noel: return ("pm_santa", 0.95, "pt-br")
+        // Recorded with tools/make_voices_chatterbox.py, copying Lewis's English voice.
+        case .lewisPT: return ("chatterbox:v_lewis_intro_1", 1.0, "pt-br")
         }
     }
 }
@@ -83,6 +89,7 @@ public enum HostScript {
     /// Lines a Host says in their own way.
     static let overrides: [Host: [String: String]] = [
         .george: george, .emma: emma, .rex: rex, .nicole: nicole, .santa: santa, .dora: dora, .noel: noel,
+        .lewisPT: lewisPT,
     ]
 
     private static func l(_ id: String, _ lewis: String, _ heart: String) -> Line { Line(id: id, lewis: lewis, heart: heart) }

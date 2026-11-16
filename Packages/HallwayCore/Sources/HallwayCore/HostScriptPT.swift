@@ -146,6 +146,16 @@ extension HostScript {
         "late_3": "Você precisa mesmo ir embora de manhã?",
     ]
 
+    /// Lewis in Portuguese: Alex's lines suit him (polite, calm), with his own introduction and a few of his touches.
+    static let lewisPT: [String: String] = [
+        "intro_1": "Boa noite, e boas-vindas ao Corredor vinte e quatro. Eu sou o Lewis, seu apresentador. Sim, agora em português. As regras são simples. Fique aqui por vinte e quatro horas. A cada hora, você passa por três pares de portas.",
+        "intro_3": "Escolha a porta da esquerda ou a da direita. Escute de novo quando quiser. Se algo te encontrar, eu digo o que fazer. Uma vez só. Tente acompanhar, por favor.",
+        "welcome_back": "Ah. Você voltou. Claro que voltou. Vamos continuar, então.",
+        "doors_5": "Mais duas portas. Elas nunca acabam, sabe.",
+        "tease_3": "Confesso que gosto muito da nossa companhia.",
+        "win_2": "Amanheceu. Você sobreviveu à noite. Quase sinto orgulho. Quase.",
+    ]
+
     static let dora: [String: String] = [
         "intro_1": "Oi! Boas-vindas ao Corredor vinte e quatro! Eu sou a Dora, sua apresentadora, e estou tão feliz que você veio! Fique comigo vinte e quatro horas. A cada hora, você passa por três pares de portas!",
         "intro_4": "Você tem três corações. Se perder todos, você fica aqui comigo para sempre! Que legal! Vamos lá!",

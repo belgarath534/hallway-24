@@ -67,6 +67,8 @@ made = 0
 for h in hosts:
     if only and h["host"] not in only:
         continue
+    if h["voice"].startswith("chatterbox:"):
+        continue   # recorded by make_voices_chatterbox.py
     for line_id, text in h["lines"].items():
         made += record(f"v_{h['host']}_{line_id}", text, h["voice"], h["speed"], h["lang"], "host")
 sounds = os.path.join(ROOT, "App", "Sounds")

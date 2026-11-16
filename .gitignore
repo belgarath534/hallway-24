@@ -8,3 +8,5 @@ __pycache__/
 tools/.venv/
 tools/models/
 tools/_raw.wav
+tools/_cb_raw.wav
+App/Voices/*.part.m4a
