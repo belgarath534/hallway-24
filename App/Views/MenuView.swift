@@ -15,6 +15,14 @@ struct MenuView: View {
         NavigationStack {
             List {
                 Section {
+                    Image("MenuHallway")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 220)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .accessibilityLabel(t("Picture: a long, dark hotel hallway at night. Old wooden doors line both sides, and a single bare bulb hangs from the ceiling. Warm orange light glows from one half-open door on the left. The hallway disappears into darkness at the far end.",
+                                              "Imagem: um corredor de hotel longo e escuro, à noite. Portas de madeira antigas dos dois lados, e uma única lâmpada pendurada no teto. Uma luz laranja e quente sai de uma porta entreaberta à esquerda. O corredor some na escuridão lá no fundo."))
+                        .accessibilityAddTraits(.isImage)
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Hallway 24").font(.system(size: 40, weight: .black, design: .serif))
                         Text(t("Two doors. Twenty four hours. Listen carefully.", "Duas portas. Vinte e quatro horas. Escute com atenção."))
