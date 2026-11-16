@@ -88,3 +88,42 @@ struct CreaturePicture: View {
         }
     }
 }
+
+/// Pictures of places: the shop, the end of a night.
+enum SceneArt: String {
+    case shop = "scene_shop", lose = "scene_lose", win = "scene_win"
+
+    func description(_ l: Language) -> String {
+        switch self {
+        case .shop:
+            return l.t("Picture: the Host's shop, a dusty wooden counter in a dark corner lit by one candle. On the shelves behind it: a silver lighter, a roll of bandage, a pair of earplugs, an old iron key, a little lucky charm bag and a glowing gold coin.",
+                       "Imagem: a loja do apresentador, um balcão de madeira empoeirado num canto escuro, iluminado por uma vela. Nas prateleiras atrás: um isqueiro prateado, um rolo de curativo, protetores de ouvido, uma chave de ferro antiga, um saquinho de amuleto e uma moeda de ouro brilhando.")
+        case .lose:
+            return l.t("Picture: an empty wooden chair sits alone in the middle of a dark hallway with cracked tiles, under a single dim lamp. Heavy wooden doors line both sides, all shut.",
+                       "Imagem: uma cadeira de madeira vazia, sozinha no meio de um corredor escuro de piso rachado, sob uma única lâmpada fraca. Portas pesadas de madeira dos dois lados, todas fechadas.")
+        case .win:
+            return l.t("Picture: sunrise light pours through an open door at the end of the hallway.",
+                       "Imagem: a luz do amanhecer entra por uma porta aberta no fim do corredor.")
+        }
+    }
+}
+
+/// A place's picture, if it has one.
+struct ScenePicture: View {
+    @EnvironmentObject var settings: GameSettings
+    let scene: SceneArt
+    var height: CGFloat = 200
+
+    var body: some View {
+        if UIImage(named: scene.rawValue) != nil {
+            Image(scene.rawValue)
+                .resizable()
+                .scaledToFill()
+                .frame(height: height)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .accessibilityLabel(scene.description(settings.language))
+                .accessibilityAddTraits(.isImage)
+        }
+    }
+}

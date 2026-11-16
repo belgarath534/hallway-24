@@ -266,6 +266,10 @@ struct ShopView: View {
             StatusBar(controller: controller).padding(.top)
             CaptionBox(controller: controller)
             List {
+                Section {
+                    ScenePicture(scene: .shop, height: 160)
+                }
+                .listRowBackground(Color.clear)
                 Section(t("The Host's Shop. You have \(run.tokens) tokens.", "A Loja do Apresentador. Você tem \(run.tokens) fichas.")) {
                     ForEach(Item.allCases, id: \.self) { item in
                         Button {
@@ -361,6 +365,7 @@ struct ResultsView: View {
         let t = settings.t
         List {
             Section {
+                ScenePicture(scene: won ? .win : .lose, height: 220)
                 Text(won ? t("You survived the night.", "Você sobreviveu à noite.") : t("The hallway kept you.", "O corredor ficou com você."))
                     .font(.largeTitle.bold())
                 Text(won ? t("All twenty four hours.", "Todas as vinte e quatro horas.") : t("You reached hour \(run.hour).", "Você chegou à hora \(run.hour)."))
