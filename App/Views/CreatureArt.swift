@@ -71,10 +71,10 @@ struct HostPicture: View {
         if HostArt.has(host) {
             Image(HostArt.imageName(host))
                 .resizable()
-                .scaledToFill()
-                .frame(height: height)
-                .frame(maxWidth: .infinity)
+                .scaledToFit()   // the whole picture, never cropped, on any screen
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                .frame(maxHeight: height * 1.4)
+                .frame(maxWidth: .infinity)
                 .accessibilityLabel(HostArt.description(host, settings.language))
                 .accessibilityAddTraits(.isImage)
         }
@@ -91,10 +91,10 @@ struct CreaturePicture: View {
         if CreatureArt.has(creature) {
             Image(CreatureArt.imageName(creature))
                 .resizable()
-                .scaledToFill()
-                .frame(height: height)
-                .frame(maxWidth: .infinity)
+                .scaledToFit()   // the whole picture, never cropped, on any screen
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                .frame(maxHeight: height * 1.4)
+                .frame(maxWidth: .infinity)
                 .accessibilityLabel(CreatureArt.description(creature, settings.language))
                 .accessibilityAddTraits(.isImage)
         }
@@ -130,10 +130,10 @@ struct ScenePicture: View {
         if UIImage(named: scene.rawValue) != nil {
             Image(scene.rawValue)
                 .resizable()
-                .scaledToFill()
-                .frame(height: height)
-                .frame(maxWidth: .infinity)
+                .scaledToFit()   // the whole picture, never cropped, on any screen
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                .frame(maxHeight: height * 1.4)
+                .frame(maxWidth: .infinity)
                 .accessibilityLabel(scene.description(settings.language))
                 .accessibilityAddTraits(.isImage)
         }

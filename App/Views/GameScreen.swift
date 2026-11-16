@@ -14,17 +14,22 @@ struct GameScreen: View {
     var body: some View {
         ZStack {
             HallwayBackground()
-            if let won = controller.ended {
-                ResultsView(won: won, run: controller.run, close: leave)
-            } else {
-                switch controller.phase {
-                case .hallway: HallwayView(controller: controller)
-                case .encounter: EncounterView(controller: controller)
-                case .shop: ShopView(controller: controller)
-                case .practiceOver: PracticeOverView(controller: controller, close: leave)
-                case .busy, .won, .lost: BusyView(controller: controller)
+            Group {
+                if let won = controller.ended {
+                    ResultsView(won: won, run: controller.run, close: leave)
+                } else {
+                    switch controller.phase {
+                    case .hallway: HallwayView(controller: controller)
+                    case .encounter: EncounterView(controller: controller)
+                    case .shop: ShopView(controller: controller)
+                    case .practiceOver: PracticeOverView(controller: controller, close: leave)
+                    case .busy, .won, .lost: BusyView(controller: controller)
+                    }
                 }
             }
+            // On big screens (iPad, the foldable iPhone open), keep text and buttons a readable width.
+            // The creature play area underneath still takes the whole screen.
+            .frame(maxWidth: 640)
         }
         .onAppear { controller.start() }
         .onDisappear { controller.stop() }

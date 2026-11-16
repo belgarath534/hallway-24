@@ -27,7 +27,7 @@ on:
 
 jobs:
   appstore:
-    runs-on: macos-15
+    runs-on: xcode-27
     timeout-minutes: 120
     env:
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -93,10 +93,6 @@ jobs:
       - name: Store text, age rating, category and accessibility labels
         run: python3 store/fill_store_info.py
 
-      - uses: maxim-lobanov/setup-xcode@v1
-        if: inputs.screenshots == 'yes'
-        with:
-          xcode-version: latest-stable
 
       - name: Take and upload screenshots
         if: inputs.screenshots == 'yes'
