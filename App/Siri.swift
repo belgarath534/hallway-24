@@ -49,7 +49,7 @@ struct OpenPracticeIntent: AppIntent {
 
 struct RecordIntent: AppIntent {
     static var title: LocalizedStringResource = "My Record"
-    static var description = IntentDescription("Siri tells you how many nights you've survived and how far you've gotten.")
+    static var description = IntentDescription("Tells you how many nights you've survived and how far you've gotten.")
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult & ProvidesDialog {
