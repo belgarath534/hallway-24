@@ -102,8 +102,8 @@ enum SceneArt: String {
             return l.t("Picture: an empty wooden chair sits alone in the middle of a dark hallway with cracked tiles, under a single dim lamp. Heavy wooden doors line both sides, all shut.",
                        "Imagem: uma cadeira de madeira vazia, sozinha no meio de um corredor escuro de piso rachado, sob uma única lâmpada fraca. Portas pesadas de madeira dos dois lados, todas fechadas.")
         case .win:
-            return l.t("Picture: sunrise light pours through an open door at the end of the hallway.",
-                       "Imagem: a luz do amanhecer entra por uma porta aberta no fim do corredor.")
+            return l.t("Picture: at the end of the dark hallway, a door stands open onto a sunrise. Golden light pours in across the shiny wooden floor and lights up the walls. You made it out.",
+                       "Imagem: no fim do corredor escuro, uma porta aberta mostra o nascer do sol. A luz dourada entra pelo chão de madeira brilhante e ilumina as paredes. Você conseguiu sair.")
         }
     }
 }
