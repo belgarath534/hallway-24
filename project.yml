@@ -40,6 +40,9 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         ITSAppUsesNonExemptEncryption: false
+        # 3D sound: with AirPods, sounds stay in place when you turn your head.
+        NSMotionUsageDescription: "With AirPods, Hallway 24 follows how you turn your head so the creatures' sounds stay in place around you. Com AirPods, o Hallway 24 acompanha sua cabeça para os sons das criaturas ficarem no lugar."
+
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hallway24.Hallway24
