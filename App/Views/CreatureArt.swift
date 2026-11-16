@@ -26,6 +26,9 @@ enum CreatureArt {
         case .counter:
             return l.t("Picture: a very tall, thin, pale man in a dark suit and tie sits perfectly still on a wooden chair in an empty room. His sunken eyes stare down at his long bony fingers as he counts on them.",
                        "Imagem: um homem muito alto, magro e pálido, de terno escuro e gravata, sentado imóvel numa cadeira de madeira em uma sala vazia. Os olhos fundos olham para os dedos longos e ossudos enquanto ele conta neles.")
+        case .twins:
+            return l.t("Picture: two identical pale little girls with blond hair, in matching old-fashioned grey dresses with lace collars, white socks and black shoes. They hold hands in a dark doorway and stare straight at you without smiling.",
+                       "Imagem: duas meninas pálidas e idênticas, de cabelo loiro, com vestidos cinza antigos e iguais de gola de renda, meias brancas e sapatos pretos. Elas dão as mãos numa porta escura e olham direto para você, sem sorrir.")
         case .lights:
             return l.t("Picture: a run-down hallway with peeling green and cream wallpaper and papers scattered on the wooden floor, lit by one bare bulb. An old wooden clock hangs on the right wall. At the far end, the hallway fades into darkness, and a pale shape seems to move in the shadows.",
                        "Imagem: um corredor velho, com papel de parede verde e creme descascando e papéis espalhados no chão de madeira, iluminado por uma única lâmpada. Um relógio antigo de madeira está pendurado na parede da direita. Lá no fundo, o corredor some na escuridão, e uma forma pálida parece se mexer nas sombras.")
