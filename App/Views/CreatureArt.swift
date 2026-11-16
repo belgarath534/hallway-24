@@ -37,6 +37,9 @@ enum HostArt {
         case .lewis, .lewisPT:
             return l.t("Picture: Lewis, a smiling older gentleman with neat silver hair, in a dark tuxedo and black bow tie, holding a lit candle in a brass holder. Behind him, a dark hallway full of doors.",
                        "Imagem: Lewis, um senhor sorridente de cabelo grisalho bem penteado, de smoking escuro e gravata borboleta preta, segurando uma vela acesa num castiçal de latão. Atrás dele, um corredor escuro cheio de portas.")
+        case .heart:
+            return l.t("Picture: Heart, a young woman with shoulder-length brown hair and a big, warm smile, in a soft pink sweater. She holds up a glowing brass lantern in a dark hallway lined with doors. Her smile is just a little too wide.",
+                       "Imagem: Heart, uma moça de cabelo castanho na altura dos ombros e um sorriso enorme e caloroso, de suéter rosa clarinho. Ela segura uma lanterna de latão acesa em um corredor escuro cheio de portas. O sorriso dela é só um pouquinho largo demais.")
         default:
             return ""
         }
