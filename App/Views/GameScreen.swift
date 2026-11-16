@@ -234,6 +234,7 @@ struct EncounterView: View {
             VStack(spacing: 20) {
                 StatusBar(controller: controller).padding(.top)
                 Spacer()
+                if let c = controller.creature { CreaturePicture(creature: c, height: 220).padding(.horizontal).opacity(0.85) }
                 Text(controller.creature?.name(settings.language) ?? "").font(.system(size: 40, weight: .heavy, design: .serif))
                 if controller.creature == .echo {
                     Text(t("Mistakes: \(controller.game.encounter?.mistakes ?? 0) of 3", "Erros: \(controller.game.encounter?.mistakes ?? 0) de 3"))

@@ -28,6 +28,7 @@ struct PracticeView: View {
             }
             Section(t("Creatures", "Criaturas")) {
                 ForEach(Creature.allCases, id: \.self) { c in
+                    CreaturePicture(creature: c, height: 150)
                     Button {
                         playing = Pick(creature: c, difficulty: late ? 0.85 : 0.1)
                     } label: {

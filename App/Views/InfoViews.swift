@@ -28,6 +28,7 @@ struct HowToPlayView: View {
                        "As criaturas soam estranhas atrás da porta: gotas, zumbidos, arranhões ou tique-taque. Uma musiquinha de caixinha de música é o enigma do Eco. Quando uma te encontra, a tela inteira vira a área de jogo. Com o VoiceOver ligado, seus toques vão direto para o jogo."))
                 ForEach(Creature.allCases, id: \.self) { c in
                     VStack(alignment: .leading, spacing: 4) {
+                        CreaturePicture(creature: c, height: 170)
                         Text(t("\(c.name(l)), from hour \(c.firstHour)", "\(c.name(l)), a partir da hora \(c.firstHour)")).font(.headline)
                         Text(c.howTo(l))
                     }
