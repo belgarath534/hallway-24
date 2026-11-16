@@ -67,8 +67,10 @@ final class GameTests: XCTestCase {
         }
         // Not reached by the bot: it never asks for things it can't have, and never comes back.
         let notByBot: Set = ["welcome_back", "new_run", "lighter_none", "bandage_none", "bandage_full", "shop_poor",
-                             "lighter_left", "lighter_right"] as Set<String>
-        let unused = HostScript.lines.map(\.id).filter { !said.contains($0) && !notByBot.contains($0) && !$0.hasPrefix("see_") }
+                             "lighter_left", "lighter_right", "coin_none", "key_none", "practice_welcome"] as Set<String>
+        let unused = HostScript.lines.map(\.id).filter {
+            !said.contains($0) && !notByBot.contains($0) && !$0.hasPrefix("see_") && !$0.hasPrefix("tokens_")
+        }
         XCTAssertEqual(unused, [], "lines never used")
     }
 
@@ -134,12 +136,79 @@ final class GameTests: XCTestCase {
         }
     }
 
-    /// Writes the Host's lines for tools/make_voices.py: DUMP_PATH=/path/host_lines.json swift test --filter Dump
+    /// Writes every Host's lines for tools/make_voices.py: DUMP_PATH=/path/host_lines.json swift test --filter Dump
     func testDumpScript() throws {
         guard let path = ProcessInfo.processInfo.environment["DUMP_PATH"] else { return }
-        let rows = HostScript.lines.map { ["id": $0.id, "lewis": $0.lewis, "heart": $0.heart] }
-        let data = try JSONSerialization.data(withJSONObject: rows, options: [.prettyPrinted, .sortedKeys])
+        let hosts: [[String: Any]] = Host.allCases.map { h in
+            ["host": h.rawValue, "voice": h.voice.id, "speed": h.voice.speed, "lang": h.voice.lang,
+             "lines": Dictionary(uniqueKeysWithValues: HostScript.ids.map { ($0, HostScript.text($0, h)) })]
+        }
+        let data = try JSONSerialization.data(withJSONObject: hosts, options: [.prettyPrinted, .sortedKeys])
         try data.write(to: URL(fileURLWithPath: path))
+    }
+
+    /// Every Host can say every line, in their own language, and personal lines only replace real ones.
+    func testEveryHostHasEveryLine() {
+        for host in Host.allCases {
+            for id in HostScript.ids {
+                let text = HostScript.text(id, host)
+                XCTAssertNotEqual(text, id, "\(host) has no line \(id)")
+                XCTAssertFalse(text.isEmpty, "\(host) \(id)")
+            }
+            for id in HostScript.overrides[host]?.keys ?? [:].keys {
+                XCTAssertTrue(HostScript.has(id), "\(host) overrides unknown line \(id)")
+            }
+        }
+        for id in HostScript.pt.keys { XCTAssertTrue(HostScript.has(id), "Portuguese has unknown line \(id)") }
+    }
+
+    /// Every Host can play a whole night.
+    func testEveryHostPlays() {
+        for (i, host) in Host.allCases.enumerated() {
+            let r = Simulator.play(seed: UInt64(i + 1), host: host, bot: perfect).0
+            XCTAssertTrue(r.won, "\(host)")
+        }
+    }
+
+    func testPracticeRoom() {
+        let game = Game(host: .alex, practice: .drip, difficulty: 0.5, seed: 4, welcome: true)
+        var said: [String] = []
+        func run(_ seconds: Double, input: (Game) -> Input? = { _ in nil }) {
+            for _ in 0..<Int(seconds * 30) {
+                if game.waitingForHost { game.hostFinished() }
+                if let i = input(game) { game.input(i) }
+                game.update(1.0 / 30)
+                for case let .say(id) in game.drainEvents() { said.append(id) }
+            }
+        }
+        run(20)
+        XCTAssertEqual(game.phase, .practiceOver)
+        XCTAssertEqual(Array(said.prefix(2)), ["practice_welcome", "learn_drip"])
+        XCTAssertEqual(said.last, "caught_drip_late")
+        XCTAssertEqual(game.run.health, Game.maxHealth)
+        game.input(.again)
+        var bot = BotPlayer(skill: 1, ear: 1, reaction: 0.3, seed: 1)
+        run(20) { bot.act($0) }
+        XCTAssertEqual(game.phase, .practiceOver)
+        XCTAssertTrue(said.contains("meet_drip"))
+        XCTAssertTrue(HostScript.variants("survived").contains(said.last ?? ""))
+    }
+
+    func testSecondChanceAndCharm() {
+        var state = RunState(seed: 8)
+        state.health = 1
+        state.items = [Item.secondChance.rawValue: 1]
+        let bad = BotPlayer(skill: 0, ear: 0, reaction: 0.4, seed: 2)
+        let r = Simulator.play(seed: 8, bot: bad, resume: state).0
+        XCTAssertTrue(r.lines.contains("second_chance_saved"))
+        XCTAssertFalse(r.won)
+    }
+
+    func testOldSavesStillLoad() throws {
+        let old = #"{"rng":{"state":5},"hour":7,"step":2,"health":2,"tokens":3,"items":{"lighter":1},"doors":[],"met":["drip"],"stats":{"survived":1,"hits":1,"safeRooms":4,"tokensEarned":3},"atShop":false}"#
+        let state = try JSONDecoder().decode(RunState.self, from: Data(old.utf8))
+        XCTAssertEqual(state.hour, 7)
+        XCTAssertEqual(state.coinDoors, 0)
     }
 }
 
@@ -190,6 +259,51 @@ final class EncounterTests: XCTestCase {
         XCTAssertEqual(run(.mimic, input: wrong, at: 2), .caught("caught_mimic"))
         XCTAssertEqual(run(.mimic, input: need.input, at: 3.5), .survived)
         XCTAssertEqual(run(.mimic), .caught("caught_mimic"))
+    }
+
+    func testEchoSolvedByPlayingItBack() {
+        var e = Encounter(creature: .echo, difficulty: 0.2, rng: RNG(seed: 3))
+        var steps = 0
+        while e.outcome == nil, steps < 3000 {
+            _ = e.update(1.0 / 30)
+            if let need = e.nextRequired, e.time >= need.from + 0.3 { _ = e.input(need.input) }
+            steps += 1
+        }
+        XCTAssertEqual(e.outcome, .survived)
+        XCTAssertEqual(e.mistakes, 0)
+    }
+
+    func testEchoThreeMistakes() {
+        var e = Encounter(creature: .echo, difficulty: 0.8, rng: RNG(seed: 3))
+        var steps = 0
+        while e.outcome == nil, steps < 5000 {
+            _ = e.update(1.0 / 30)
+            if let need = e.nextRequired, e.time >= need.from + 0.3 {
+                _ = e.input(need.input == .tap ? .up : .tap)
+            }
+            steps += 1
+        }
+        XCTAssertEqual(e.outcome, .caught("caught_echo"))
+        XCTAssertEqual(e.mistakes, 3)
+    }
+
+    func testEchoWaitingTooLongIsAMistake() {
+        var e = Encounter(creature: .echo, difficulty: 0, rng: RNG(seed: 9))
+        for _ in 0..<(60 * 30) { _ = e.update(1.0 / 30) }
+        XCTAssertEqual(e.outcome, .caught("caught_echo"))
+    }
+
+    func testStaticZapsOnEachRightSwipe() {
+        var e = Encounter(creature: .staticBuzz, difficulty: 0.5, rng: RNG(seed: 1))
+        var zaps = 0
+        for _ in 0..<2000 where e.outcome == nil {
+            _ = e.update(1.0 / 30)
+            if let need = e.nextRequired, e.time >= need.from + 0.3 {
+                zaps += e.input(need.input).filter { if case let .play(c) = $0 { return c.sfx == .zap }; return false }.count
+            }
+        }
+        XCTAssertEqual(e.outcome, .survived)
+        XCTAssertEqual(zaps, e.rounds)
     }
 
     func testMimicTapReplays() {

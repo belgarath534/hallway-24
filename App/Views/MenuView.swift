@@ -11,12 +11,13 @@ struct MenuView: View {
     }
 
     var body: some View {
+        let t = settings.t
         NavigationStack {
             List {
                 Section {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Hallway 24").font(.system(size: 40, weight: .black, design: .serif))
-                        Text("Two doors. Twenty four hours. Listen carefully.")
+                        Text(t("Two doors. Twenty four hours. Listen carefully.", "Duas portas. Vinte e quatro horas. Escute com atenção."))
                             .font(.callout).foregroundStyle(.secondary)
                     }
                     .padding(.vertical, 8)
@@ -30,14 +31,20 @@ struct MenuView: View {
                         Button {
                             playing = PlayRequest(resume: saved)
                         } label: {
-                            Label("Continue: hour \(saved.hour), \(saved.health) \(saved.health == 1 ? "heart" : "hearts")", systemImage: "play.fill")
+                            Label(t("Continue: hour \(saved.hour), \(saved.health) \(saved.health == 1 ? "heart" : "hearts")",
+                                    "Continuar: hora \(saved.hour), \(saved.health) \(saved.health == 1 ? "coração" : "corações")"),
+                                  systemImage: "play.fill")
                         }
                     }
                     Button {
                         settings.clearSavedRun()
                         playing = PlayRequest(resume: nil)
                     } label: {
-                        Label(settings.savedRun == nil ? "Start the Night" : "New Night", systemImage: "door.left.hand.open")
+                        Label(settings.savedRun == nil ? t("Start the Night", "Começar a Noite") : t("New Night", "Nova Noite"),
+                              systemImage: "door.left.hand.open")
+                    }
+                    NavigationLink { PracticeView() } label: {
+                        Label(t("Practice Room", "Sala de Treino"), systemImage: "figure.run")
                     }
                 }
 
@@ -45,17 +52,21 @@ struct MenuView: View {
                     NavigationLink {
                         HostPickerView(firstTime: false)
                     } label: {
-                        Label("Your Host: \(settings.host.name)", systemImage: "person.wave.2")
+                        Label(t("Your Host: \(settings.host.name)", "Seu apresentador: \(settings.host.name)"), systemImage: "person.wave.2")
                     }
-                    NavigationLink { HowToPlayView() } label: { Label("How to Play", systemImage: "questionmark.circle") }
-                    NavigationLink { SettingsView() } label: { Label("Settings", systemImage: "gearshape") }
-                    NavigationLink { CreditsView() } label: { Label("Credits", systemImage: "music.note") }
+                    NavigationLink { HowToPlayView() } label: { Label(t("How to Play", "Como Jogar"), systemImage: "questionmark.circle") }
+                    NavigationLink { SettingsView() } label: { Label(t("Settings", "Ajustes"), systemImage: "gearshape") }
+                    NavigationLink { LanguagePickerView(firstTime: false) } label: {
+                        Label(t("Language: English", "Idioma: Português"), systemImage: "globe")
+                    }
+                    NavigationLink { CreditsView() } label: { Label(t("Credits", "Créditos"), systemImage: "music.note") }
                 }
 
                 if settings.nightsPlayed > 0 {
-                    Section("Your Record") {
-                        Text("Nights survived: \(settings.nightsSurvived) of \(settings.nightsPlayed)")
-                        Text("Furthest: hour \(settings.bestHour)")
+                    Section(t("Your Record", "Seu Recorde")) {
+                        Text(t("Nights survived: \(settings.nightsSurvived) of \(settings.nightsPlayed)",
+                               "Noites sobrevividas: \(settings.nightsSurvived) de \(settings.nightsPlayed)"))
+                        Text(t("Furthest: hour \(settings.bestHour)", "Mais longe: hora \(settings.bestHour)"))
                     }
                 }
             }

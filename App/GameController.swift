@@ -24,18 +24,22 @@ final class GameController: ObservableObject {
     private var timer: Timer?
     private var last = Date()
 
-    init(settings: GameSettings, resume: RunState?) {
+    /// A night (new, or continued), or the Practice Room when `practice` is set.
+    init(settings: GameSettings, resume: RunState?, practice: (creature: Creature, difficulty: Double)? = nil) {
         self.settings = settings
-        if let resume {
+        if let practice {
+            game = Game(host: settings.host, practice: practice.creature, difficulty: practice.difficulty,
+                        seed: UInt64.random(in: 1...UInt64.max), welcome: !settings.practiceVisited)
+        } else if let resume {
             game = Game(host: settings.host, resume: resume)
         } else {
             game = Game(host: settings.host, seed: UInt64.random(in: 1...UInt64.max), tutorial: settings.tutorial)
         }
         run = game.run
+        sound.language = settings.language
         voice.host = settings.host
         voice.recorded = settings.recordedHost
         haptics.enabled = settings.haptics
-        sound.musicVolume = settings.musicVolume
         voice.onFinished = { [weak self] in
             guard let self else { return }
             self.talking = false
@@ -46,6 +50,7 @@ final class GameController: ObservableObject {
 
     func start() {
         guard timer == nil else { return }
+        if game.practice != nil { settings.practiceVisited = true }
         UIApplication.shared.isIdleTimerDisabled = true
         last = Date()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
@@ -118,7 +123,7 @@ final class GameController: ObservableObject {
             case let .caption(text):
                 caption = text
             case .save:
-                settings.save(game.run)
+                if game.practice == nil { settings.save(game.run) }
             case let .ended(won):
                 settings.record(won: won, hour: game.run.hour)
                 ended = won

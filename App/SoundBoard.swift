@@ -29,6 +29,11 @@ final class SoundBoard {
     private var currentTrack: Track?
     private var ducked = false
     var musicVolume: Double = 0.6 { didSet { music?.volume = targetMusicVolume } }
+    /// Background loops. Kept low by default so the Host and the creatures are easy to hear.
+    var ambienceVolume: Double = 0.35 { didSet { ambienceMixer.outputVolume = targetAmbienceVolume } }
+    var effectsVolume: Double = 1.0
+    /// Spoken sounds (the Counter, the Mimic) use this language.
+    var language: Language = .en
 
     private init() {
         try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
@@ -78,7 +83,8 @@ final class SoundBoard {
     }
 
     private func load() {
-        let names = Sfx.allCases.map { "sfx_\($0.rawValue)" } + Ambience.allCases.map(\.rawValue)
+        let names = Sfx.allCases.map { "sfx_\($0.rawValue)" } + Sfx.allCases.filter(\.spoken).map { "sfx_pt_\($0.rawValue)" }
+            + Ambience.allCases.map(\.rawValue)
         for name in names {
             guard let url = Bundle.main.url(forResource: name, withExtension: "m4a")
                 ?? Bundle.main.url(forResource: name, withExtension: "m4a", subdirectory: "Sounds"),
@@ -115,14 +121,15 @@ final class SoundBoard {
 
     func play(_ cue: SoundCue) {
         start()
-        guard let buffer = buffers["sfx_\(cue.sfx.rawValue)"] else { return }
+        let name = cue.sfx.spoken && language == .pt ? "sfx_pt_\(cue.sfx.rawValue)" : "sfx_\(cue.sfx.rawValue)"
+        guard let buffer = buffers[name] ?? buffers["sfx_\(cue.sfx.rawValue)"] else { return }
         let v = voices[nextVoice]
         nextVoice = (nextVoice + 1) % voices.count
         v.player.stop()
         v.speed.rate = Float(cue.rate)
         v.filter.bypass = !cue.muffled
         v.mixer.pan = Float(max(-1, min(1, cue.pan)))
-        v.mixer.outputVolume = Float(cue.volume)
+        v.mixer.outputVolume = Float(cue.volume * effectsVolume)
         v.player.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
         v.player.play()
     }
@@ -139,7 +146,7 @@ final class SoundBoard {
         ambiencePlayer.stop()
         guard let amb, let buffer = buffers[amb.rawValue] else { return }
         start()
-        ambienceMixer.outputVolume = amb == .deep ? 0.45 : 0.35
+        ambienceMixer.outputVolume = targetAmbienceVolume
         ambiencePlayer.scheduleBuffer(buffer, at: nil, options: [.loops], completionHandler: nil)
         ambiencePlayer.play()
     }
@@ -147,6 +154,11 @@ final class SoundBoard {
     // MARK: Music
 
     private var targetMusicVolume: Float { Float(musicVolume * (ducked ? 0.35 : 1) * 0.7) }
+
+    /// The ambience recordings are loud: even at 100% the slider keeps them well under the Host.
+    private var targetAmbienceVolume: Float {
+        Float(ambienceVolume * (ducked ? 0.4 : 1) * (currentAmbience == .deep ? 0.5 : 0.4))
+    }
 
     func music(_ track: Track?) {
         guard track != currentTrack else { return }
@@ -176,6 +188,7 @@ final class SoundBoard {
         guard on != ducked else { return }
         ducked = on
         music?.setVolume(targetMusicVolume, fadeDuration: 0.4)
+        ambienceMixer.outputVolume = targetAmbienceVolume
     }
 
     func pause(_ paused: Bool) {

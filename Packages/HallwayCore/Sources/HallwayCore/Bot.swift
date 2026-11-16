@@ -32,7 +32,9 @@ public struct BotPlayer: Sendable {
             let room = game.run.hour * 10 + game.run.step
             guard game.run.doors.count == 2, choseAt != room, idleFor > 1.5 else { return nil }
             if game.run.health < 2, game.run.count(.bandage) > 0 { return .use(.bandage) }
+            if game.run.count(.coin) > 0, game.run.coinDoors == 0 { return .use(.coin) }
             choseAt = room
+            if game.run.count(.key) > 0, !soundsSafe(game.run.doors[0]), !soundsSafe(game.run.doors[1]) { return .use(.key) }
             return chooseDoor(game.run.doors)
         case .encounter:
             guard let e = game.encounter else { return nil }
@@ -57,21 +59,22 @@ public struct BotPlayer: Sendable {
         case .shop:
             guard idleFor > 1 else { return nil }
             let r = game.run
-            if r.tokens >= Item.charm.price, r.count(.charm) == 0 { return .buy(.charm) }
-            if r.tokens >= Item.bandage.price, r.count(.bandage) == 0 { return .buy(.bandage) }
-            if r.tokens >= Item.lighter.price, r.count(.lighter) == 0 { return .buy(.lighter) }
+            for item in [Item.secondChance, .charm, .bandage, .earplugs, .key] where r.tokens >= item.price && r.count(item) == 0 {
+                return .buy(item)
+            }
             return .leave
-        case .busy, .won, .lost:
+        case .busy, .won, .lost, .practiceOver:
             return nil
         }
     }
 
+    private mutating func soundsSafe(_ d: Door) -> Bool {
+        let safeHints = Set(SafeRoom.allCases.map(\.hint))
+        guard safeHints.contains(d.hint) else { return false }
+        return d.rate == 1 || !rng.chance(ear)
+    }
+
     private mutating func chooseDoor(_ doors: [Door]) -> Input {
-        func soundsSafe(_ d: Door) -> Bool {
-            let safeHints = Set(SafeRoom.allCases.map(\.hint))
-            guard safeHints.contains(d.hint) else { return false }
-            return d.rate == 1 || !rng.chance(ear)
-        }
         let left = soundsSafe(doors[0]), right = soundsSafe(doors[1])
         if left != right { return left ? .left : .right }
         return rng.chance(0.5) ? .left : .right

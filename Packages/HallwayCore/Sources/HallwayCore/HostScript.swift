@@ -1,17 +1,54 @@
-/// Everything the Host says. Two Hosts, same game, different personalities:
-/// Lewis is a polite, old-fashioned gentleman; Heart is far too sweet.
+/// Everything the Host says. Ten Hosts, same game, different personalities, in English and Portuguese.
 ///
-/// Every line has an id. The app plays the recording v_<host>_<id>.m4a when there is one, and otherwise
-/// speaks the text. `tools/make_voices.py` records every line (the list comes from the DumpScript test).
+/// Every line has an id. English: Lewis's lines are the base; the other English Hosts replace the lines that
+/// carry their personality and share the rest (rules, numbers, creature instructions). Portuguese works the same
+/// way with Alex as the base (HostScriptPT.swift).
+/// The app plays the recording v_<host>_<id>.m4a when there is one, and otherwise speaks the text.
+/// `tools/make_voices.py` records every line (the list comes from the DumpScript test).
 public enum Host: String, Codable, CaseIterable, Sendable {
-    case lewis, heart
+    case lewis, heart, george, emma, rex, nicole, santa
+    case alex, dora, noel
 
-    public var name: String { self == .lewis ? "Lewis" : "Heart" }
+    public var language: Language { [.alex, .dora, .noel].contains(self) ? .pt : .en }
+
+    public static func all(_ l: Language) -> [Host] { allCases.filter { $0.language == l } }
+
+    public var name: String {
+        switch self {
+        case .noel: return "Noel"
+        default: return rawValue.prefix(1).uppercased() + rawValue.dropFirst()
+        }
+    }
 
     public var about: String {
-        self == .lewis
-            ? "A polite gentleman with a British accent. Very proper. Very calm. Slightly too calm."
-            : "A sweet, cheerful woman. She's so proud of you. Even when you pick the wrong door."
+        switch self {
+        case .lewis: return "A polite gentleman with a British accent. Very proper. Very calm. Slightly too calm."
+        case .heart: return "A sweet, cheerful woman. She's so proud of you. Even when you pick the wrong door."
+        case .george: return "An old caretaker who has looked after the hallway for a very, very long time. He remembers every guest. Especially the ones who didn't leave."
+        case .emma: return "A strict night nurse. She checks your health like you're her patient, and she is very disappointed when you get hurt."
+        case .rex: return "A bored night-shift security guard. He doesn't really care if you make it. He just wants his shift to end."
+        case .nicole: return "A soft, whispery girl who used to be a guest here. She says she's trying to help. She's been here a long time."
+        case .santa: return "A big, jolly man who is far too happy about everything that happens to you. Ho ho ho."
+        case .alex: return "Um apresentador educado e calmo. Muito gentil. Gentil até demais."
+        case .dora: return "Uma moça doce e animada. Ela tem tanto orgulho de você. Mesmo quando você escolhe a porta errada."
+        case .noel: return "Um velhinho alegre demais, que acha graça de tudo que acontece com você. Ho ho ho."
+        }
+    }
+
+    /// The Kokoro voice, its speed and language (for tools/make_voices.py).
+    public var voice: (id: String, speed: Double, lang: String) {
+        switch self {
+        case .lewis: return ("bm_lewis", 0.92, "en-gb")
+        case .heart: return ("af_heart", 0.98, "en-us")
+        case .george: return ("bm_george", 0.9, "en-gb")
+        case .emma: return ("bf_emma", 0.95, "en-gb")
+        case .rex: return ("am_onyx", 0.95, "en-us")
+        case .nicole: return ("af_nicole", 0.92, "en-us")
+        case .santa: return ("am_santa", 0.95, "en-us")
+        case .alex: return ("pm_alex", 0.95, "pt-br")
+        case .dora: return ("pf_dora", 0.97, "pt-br")
+        case .noel: return ("pm_santa", 0.95, "pt-br")
+        }
     }
 }
 
@@ -20,13 +57,21 @@ public enum HostScript {
         public let id: String
         public let lewis: String
         public let heart: String
-
-        public func text(_ host: Host) -> String { host == .lewis ? lewis : heart }
     }
 
-    public static func text(_ id: String, _ host: Host) -> String { byID[id]?.text(host) ?? id }
+    public static func text(_ id: String, _ host: Host) -> String {
+        if let own = overrides[host]?[id] { return own }
+        switch host {
+        case .heart: return byID[id]?.heart ?? id
+        case _ where host.language == .pt: return pt[id] ?? id
+        default: return byID[id]?.lewis ?? id
+        }
+    }
 
     public static func has(_ id: String) -> Bool { byID[id] != nil }
+
+    /// Every line id.
+    public static var ids: [String] { lines.map(\.id) }
 
     /// Ids of the variants of a line: "doors" gives doors_1, doors_2, …
     public static func variants(_ prefix: String) -> [String] {
@@ -35,18 +80,23 @@ public enum HostScript {
 
     static let byID: [String: Line] = Dictionary(uniqueKeysWithValues: lines.map { ($0.id, $0) })
 
+    /// Lines a Host says in their own way.
+    static let overrides: [Host: [String: String]] = [
+        .george: george, .emma: emma, .rex: rex, .nicole: nicole, .santa: santa, .dora: dora, .noel: noel,
+    ]
+
     private static func l(_ id: String, _ lewis: String, _ heart: String) -> Line { Line(id: id, lewis: lewis, heart: heart) }
 
     private static let numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven",
                                   "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen",
                                   "nineteen", "twenty", "twenty one", "twenty two", "twenty three", "twenty four"]
 
-    public static let lines: [Line] = intro + hours + doors + rooms + lighter + creatures + results + shop + items + flavor
+    public static let lines: [Line] = intro + hours + doors + rooms + lighter + creatures + results + shop + items + flavor + extra
 
     static let intro: [Line] = [
         l("intro_1",
-          "Good evening, and welcome to Hallway twenty four. I'm Lewis, your host. The rules are simple. Stay for twenty four hours. Every hour, you choose a door.",
-          "Hi! Welcome to Hallway twenty four! I'm Heart, your host, and I'm so happy you're here. Stay with me for twenty four hours. Every hour, you pick a door!"),
+          "Good evening, and welcome to Hallway twenty four. I'm Lewis, your host. The rules are simple. Stay for twenty four hours. Every hour, you get through three pairs of doors.",
+          "Hi! Welcome to Hallway twenty four! I'm Heart, your host, and I'm so happy you're here. Stay with me for twenty four hours. Every hour, you go through three pairs of doors!"),
         l("intro_2",
           "Before you choose, listen. Each door makes a sound. Bells, keys and dishes are usually lovely. Dripping, buzzing and scratching… usually are not.",
           "Listen first, okay? Every door makes a little sound. Bells, keys and dishes are nice rooms. Dripping, buzzing and scratching are… less nice."),
@@ -203,4 +253,37 @@ public enum HostScript {
         l("late_2", "The doors are getting louder. Have you noticed?", "The doors are getting louder! Did you notice?"),
         l("late_3", "Must you really leave in the morning?", "You don't really want to leave in the morning, do you?"),
     ]
+}
+
+extension HostScript {
+    private static func x(_ id: String, _ lewis: String, _ heart: String) -> Line { Line(id: id, lewis: lewis, heart: heart) }
+
+    private static let more = ["four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"]
+
+    /// Lines added in the second update: the Echo, Static's count, the new items, the Practice Room.
+    static let extra: [Line] = [
+        x("learn_echo",
+          "A music box. It plays a little pattern: left, right, up, down, or a knock in the middle. When it chimes, play the pattern back. Swipes for the directions, a tap for the knock. Three mistakes and it shrieks.",
+          "Ooh, a music box! It plays a little pattern: left, right, up, down, or a knock in the middle. When it chimes, play it back! Swipe for directions, tap for the knock. Three mistakes and it screams!"),
+        x("meet_echo", "The music box. Listen, then play it back.", "The music box! Listen, then play it back!"),
+        x("caught_echo", "Three mistakes. The music box shrieks, and something hears it.", "Three mistakes! The music box screams, and something heard it!"),
+        x("see_echo", "a little music box.", "a cute little music box!"),
+        x("echo_reward", "The music box is pleased. It pays well.", "The music box loves you! It pays you!"),
+        x("static_3", "Three buzzes.", "Three buzzes!"),
+        x("static_4", "Four buzzes.", "Four buzzes!"),
+        x("static_5", "Five buzzes.", "Five buzzes!"),
+        x("earplugs_used", "You put in your earplugs. The Counter counts and counts. You hear nothing. It gives up.",
+          "Earplugs in! The Counter counts and counts, but you can't hear a thing! It gives up!"),
+        x("coin_used", "You flip the lucky coin. Double tokens, for a while.", "You flip the lucky coin! Double tokens for a while!"),
+        x("coin_none", "You don't have a lucky coin.", "You don't have a lucky coin!"),
+        x("key_used", "The skeleton key opens a third way. You walk straight past these doors.", "The skeleton key opens a secret way! You skip these doors!"),
+        x("key_none", "You don't have a skeleton key.", "You don't have a skeleton key!"),
+        x("second_chance_saved", "That should have been the end of you. Your second chance says otherwise. One heart.",
+          "That should have been the end! But your second chance saved you! One heart!"),
+        x("found_earplugs", "Earplugs.", "Earplugs!"),
+        x("found_coin", "A lucky coin.", "A lucky coin!"),
+        x("found_key", "A skeleton key.", "A skeleton key!"),
+        x("practice_welcome", "The practice room. Nothing in here can truly hurt you. Probably.",
+          "The practice room! Nothing in here can really hurt you. I think!"),
+    ] + more.enumerated().map { i, n in x("tokens_\(i + 4)", n.prefix(1).uppercased() + n.dropFirst() + " tokens.", n.prefix(1).uppercased() + n.dropFirst() + " tokens!") }
 }

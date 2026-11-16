@@ -34,9 +34,10 @@ final class HostVoice: NSObject, AVAudioPlayerDelegate, AVSpeechSynthesizerDeleg
             return
         }
         let u = AVSpeechUtterance(string: HostScript.text(id, host))
-        u.voice = AVSpeechSynthesisVoice(language: host == .lewis ? "en-GB" : "en-US")
-        u.rate = AVSpeechUtteranceDefaultSpeechRate * (host == .lewis ? 0.95 : 1.02)
-        u.pitchMultiplier = host == .lewis ? 0.9 : 1.15
+        let lang = host.voice.lang
+        u.voice = AVSpeechSynthesisVoice(language: lang == "en-gb" ? "en-GB" : lang == "pt-br" ? "pt-BR" : "en-US")
+        u.rate = AVSpeechUtteranceDefaultSpeechRate * Float(min(host.voice.speed + 0.05, 1.05))
+        u.pitchMultiplier = host.voice.id.dropFirst().hasPrefix("f") ? 1.1 : 0.9
         utterance = u
         synth.speak(u)
     }

@@ -1,4 +1,14 @@
 /// Everything in the hallway: sides, items, rooms, creatures, and the names of every sound the game plays.
+/// Text the player sees comes in English and Brazilian Portuguese.
+
+public enum Language: String, Codable, CaseIterable, Sendable {
+    case en, pt
+
+    public var name: String { self == .en ? "English" : "Português (Brasil)" }
+
+    /// Picks the text for this language.
+    public func t(_ en: String, _ pt: String) -> String { self == .en ? en : pt }
+}
 
 public enum Side: String, Codable, CaseIterable, Sendable {
     case left, right
@@ -9,13 +19,17 @@ public enum Side: String, Codable, CaseIterable, Sendable {
 }
 
 public enum Item: String, Codable, CaseIterable, Sendable, Comparable {
-    case lighter, bandage, charm
+    case lighter, bandage, earplugs, coin, key, charm, secondChance
 
-    public var name: String {
+    public func name(_ l: Language) -> String {
         switch self {
-        case .lighter: return "Lighter"
-        case .bandage: return "Bandage"
-        case .charm: return "Lucky Charm"
+        case .lighter: return l.t("Lighter", "Isqueiro")
+        case .bandage: return l.t("Bandage", "Curativo")
+        case .earplugs: return l.t("Earplugs", "Protetor de ouvido")
+        case .coin: return l.t("Lucky Coin", "Moeda da Sorte")
+        case .key: return l.t("Skeleton Key", "Chave Mestra")
+        case .charm: return l.t("Lucky Charm", "Amuleto")
+        case .secondChance: return l.t("Second Chance", "Segunda Chance")
         }
     }
 
@@ -23,31 +37,50 @@ public enum Item: String, Codable, CaseIterable, Sendable, Comparable {
         switch self {
         case .lighter: return 2
         case .bandage: return 4
-        case .charm: return 10
+        case .earplugs: return 4
+        case .coin: return 5
+        case .key: return 6
+        case .charm: return 8
+        case .secondChance: return 14
         }
     }
 
-    public var about: String {
+    public func about(_ l: Language) -> String {
         switch self {
-        case .lighter: return "Peek under both doors. The Host tells you the truth about what's behind them."
-        case .bandage: return "Get one heart back."
-        case .charm: return "The next time something gets you, the charm breaks instead of you."
+        case .lighter: return l.t("Peek under both doors. The Host tells you the truth about what's behind them.",
+                                  "Espie embaixo das duas portas. O apresentador conta a verdade sobre o que tem atrás delas.")
+        case .bandage: return l.t("Get one heart back.", "Recupera um coração.")
+        case .earplugs: return l.t("The next time you meet the Counter, you can't hear it count, so it can't trick you. It leaves.",
+                                   "Na próxima vez que encontrar o Contador, você não ouve a contagem, então ele não te engana. Ele vai embora.")
+        case .coin: return l.t("Double tokens for the next nine doors.", "Fichas em dobro nas próximas nove portas.")
+        case .key: return l.t("Skip a pair of doors. You walk straight past them to the next ones.",
+                              "Pule um par de portas. Você passa direto por elas até as próximas.")
+        case .charm: return l.t("The next time something gets you, the charm breaks instead of you.",
+                                "Na próxima vez que algo te pegar, o amuleto quebra no seu lugar.")
+        case .secondChance: return l.t("If you lose your last heart, you get one back instead of losing the night. Works once.",
+                                       "Se você perder o último coração, ganha um de volta em vez de perder a noite. Funciona uma vez.")
         }
     }
+
+    /// Used from the hallway (the others work by themselves).
+    public var usable: Bool { [.lighter, .bandage, .coin, .key].contains(self) }
 
     public static func < (a: Item, b: Item) -> Bool { allCases.firstIndex(of: a)! < allCases.firstIndex(of: b)! }
 }
 
 public enum Creature: String, Codable, CaseIterable, Sendable {
     case drip, staticBuzz = "static", crawler, counter, mimic
+    /// Not really a creature: a music-box puzzle. Play its pattern back.
+    case echo
 
-    public var name: String {
+    public func name(_ l: Language) -> String {
         switch self {
-        case .drip: return "The Drip"
-        case .staticBuzz: return "Static"
-        case .crawler: return "The Crawler"
-        case .counter: return "The Counter"
-        case .mimic: return "The Mimic"
+        case .drip: return l.t("The Drip", "A Goteira")
+        case .staticBuzz: return l.t("Static", "Estática")
+        case .crawler: return l.t("The Crawler", "O Rastejante")
+        case .counter: return l.t("The Counter", "O Contador")
+        case .mimic: return l.t("The Mimic", "O Imitador")
+        case .echo: return l.t("The Echo", "O Eco")
         }
     }
 
@@ -55,25 +88,37 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
     public var firstHour: Int {
         switch self {
         case .drip, .staticBuzz: return 1
+        case .echo: return 2
         case .crawler: return 3
-        case .counter: return 5
         case .mimic: return 4
+        case .counter: return 5
         }
     }
 
-    /// How to survive it, for How to Play.
-    public var howTo: String {
+    /// The creatures behind creature doors (the Echo has doors of its own).
+    public static let monsters: [Creature] = [.drip, .staticBuzz, .crawler, .counter, .mimic]
+
+    /// How to survive it, for How to Play and the Practice Room.
+    public func howTo(_ l: Language) -> String {
         switch self {
         case .drip:
-            return "Drips speed up as it comes closer. When you hear the big splash, swipe down to hide in the locker. Hide too early and it hears the locker door."
+            return l.t("Drips speed up as it comes closer. When you hear the big splash, swipe down to hide in the locker. Hide too early and it hears the locker door.",
+                       "As gotas aceleram conforme ela chega perto. Quando ouvir o splash, deslize para baixo para se esconder no armário. Cedo demais e ela ouve a porta do armário.")
         case .staticBuzz:
-            return "A buzz appears on your left or your right. Swipe the other way, away from it. It comes back a few times, faster each time."
+            return l.t("A buzz plays in one ear. Swipe the other way, away from it. Each right swipe makes a zap. It comes back three to five times, faster each time, until you hear it fizzle out.",
+                       "Um zumbido toca em um ouvido. Deslize para o outro lado, para longe dele. Cada acerto faz um zap. Ele volta de três a cinco vezes, cada vez mais rápido, até sumir com um chiado.")
         case .crawler:
-            return "Footsteps creep up behind you. If it growls, swipe up to run. If it stops and sniffs, don't touch anything until it walks away. Run too soon and it chases you."
+            return l.t("Footsteps creep up behind you. If it growls, swipe up and run. If it stops and sniffs, don't touch anything until it walks away. Run too soon and it chases you.",
+                       "Passos se aproximam por trás. Se ele rosnar, deslize para cima e corra. Se ele parar e farejar, não toque em nada até ele ir embora. Correr cedo demais faz ele te perseguir.")
         case .counter:
-            return "It counts down from ten. Don't touch the screen at all until it sighs and leaves. Later on it tries to trick you with noises."
+            return l.t("It counts down from ten. Don't touch the screen at all until it sighs and leaves. Later on it tries to trick you with noises.",
+                       "Ele conta de dez até um. Não toque na tela até ele suspirar e ir embora. Mais tarde ele tenta te enganar com barulhos.")
         case .mimic:
-            return "It hides behind doors pretending to be a good room, but its sound is a little too low. Inside, it plays a sound on both sides. One is real and one is the Mimic, lower. Swipe toward the real one. Tap to hear them again."
+            return l.t("It hides behind doors pretending to be a good room, but its sound is a little too low. Inside, it plays a voice on both sides. One is real and one is the Mimic, lower. Swipe toward the real one. Tap to hear them again.",
+                       "Ele se esconde atrás das portas fingindo ser um quarto bom, mas o som dele é um pouco grave demais. Lá dentro, uma voz toca dos dois lados. Uma é real e a outra é o Imitador, mais grave. Deslize para o lado da voz real. Toque para ouvir de novo.")
+        case .echo:
+            return l.t("A music box. It plays a pattern of sounds: left, right, up, down or a knock in the middle. Then it chimes: your turn. Play the pattern back with swipes and a tap. Three mistakes and it shrieks. Solve it for lots of tokens.",
+                       "Uma caixinha de música. Ela toca uma sequência de sons: esquerda, direita, cima, baixo ou uma batida no meio. Depois toca um sino: sua vez. Repita a sequência com deslizes e um toque. Três erros e ela grita. Resolva e ganhe muitas fichas.")
         }
     }
 }
@@ -81,13 +126,13 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
 public enum SafeRoom: String, Codable, CaseIterable, Sendable {
     case bedroom, kitchen, vault, storage, empty
 
-    public var name: String {
+    public func name(_ l: Language) -> String {
         switch self {
-        case .bedroom: return "Bedroom"
-        case .kitchen: return "Kitchen"
-        case .vault: return "Vault"
-        case .storage: return "Storage closet"
-        case .empty: return "Empty room"
+        case .bedroom: return l.t("Bedroom", "Quarto")
+        case .kitchen: return l.t("Kitchen", "Cozinha")
+        case .vault: return l.t("Vault", "Cofre")
+        case .storage: return l.t("Storage closet", "Depósito")
+        case .empty: return l.t("Empty room", "Sala vazia")
         }
     }
 
@@ -101,14 +146,24 @@ public enum SafeRoom: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    /// What its hint sounds like, for How to Play and captions.
-    public var hintDescription: String {
+    /// What its hint sounds like, for How to Play.
+    public func hintDescription(_ l: Language) -> String {
         switch self {
-        case .bedroom: return "a soft bell"
-        case .kitchen: return "dishes clinking"
-        case .vault: return "keys jingling"
-        case .storage: return "a wooden box opening"
-        case .empty: return "a quiet breeze"
+        case .bedroom: return l.t("a soft bell", "um sino suave")
+        case .kitchen: return l.t("dishes clinking", "pratos batendo")
+        case .vault: return l.t("keys jingling", "chaves balançando")
+        case .storage: return l.t("a wooden box opening", "uma caixa de madeira abrindo")
+        case .empty: return l.t("a quiet breeze", "uma brisa leve")
+        }
+    }
+
+    public func effect(_ l: Language) -> String {
+        switch self {
+        case .bedroom: return l.t("Gives you a heart back.", "Devolve um coração.")
+        case .kitchen: return l.t("Has a bandage.", "Tem um curativo.")
+        case .vault: return l.t("Has tokens.", "Tem fichas.")
+        case .storage: return l.t("Has a random item.", "Tem um item surpresa.")
+        case .empty: return l.t("Nothing happens. That's good.", "Nada acontece. Isso é bom.")
         }
     }
 }
@@ -142,11 +197,13 @@ public struct Door: Codable, Hashable, Sendable {
 }
 
 /// Every one-shot sound. The raw value is the file name in the app (sfx_<raw>.m4a).
+/// Spoken ones (the Counter's numbers, the Mimic's voices) also have a Portuguese file (sfx_pt_<raw>.m4a).
 public enum Sfx: String, Codable, CaseIterable, Sendable {
     // Hints through the doors
     case hintBedroom = "hint_bedroom", hintKitchen = "hint_kitchen", hintVault = "hint_vault"
     case hintStorage = "hint_storage", hintEmpty = "hint_empty"
     case hintDrip = "hint_drip", hintStatic = "hint_static", hintCrawler = "hint_crawler", hintCounter = "hint_counter"
+    case hintEcho = "hint_echo"
     // Doors and you
     case doorOpen = "door_open", doorClose = "door_close", locker = "locker", runAway = "run_away"
     // Rooms
@@ -154,7 +211,7 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
     // The Drip
     case drip1 = "drip1", drip2 = "drip2", drip3 = "drip3", splash = "splash"
     // Static
-    case buzz = "buzz", zapOut = "zap_out"
+    case buzz = "buzz", zap = "zap", zapOut = "zap_out"
     // The Crawler
     case crawl1 = "crawl1", crawl2 = "crawl2", crawl3 = "crawl3", growl = "growl", sniff = "sniff"
     // The Counter (its voice) and its tricks
@@ -163,12 +220,29 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
     case counterSigh = "counter_sigh", decoyKnock = "decoy_knock", decoyCreak = "decoy_creak"
     // The Mimic
     case mimicVoice1 = "mimic_voice1", mimicVoice2 = "mimic_voice2", mimicVoice3 = "mimic_voice3"
+    // The Echo
+    case echoLeft = "echo_left", echoRight = "echo_right", echoUp = "echo_up", echoDown = "echo_down", echoTap = "echo_tap"
+    case echoTurn = "echo_turn", echoWrong = "echo_wrong", echoSolved = "echo_solved"
     // Results
     case hit = "hit", charmBreak = "charm_break", survive = "survive", heartbeat = "heartbeat"
     case loseSting = "lose_sting", winSting = "win_sting"
 
     public static func count(_ n: Int) -> Sfx {
         [.count1, .count2, .count3, .count4, .count5, .count6, .count7, .count8, .count9, .count10][n - 1]
+    }
+
+    /// Spoken sounds have one recording per language.
+    public var spoken: Bool { rawValue.hasPrefix("count") || rawValue.hasPrefix("mimic_voice") }
+
+    /// The sound the Echo makes for a move.
+    public static func echo(_ input: Input) -> Sfx {
+        switch input {
+        case .left: return .echoLeft
+        case .right: return .echoRight
+        case .up: return .echoUp
+        case .down: return .echoDown
+        default: return .echoTap
+        }
     }
 }
 
@@ -214,4 +288,6 @@ public enum Input: Equatable, Sendable {
     case leave
     /// Skip what the Host is saying.
     case skip
+    /// Practice Room: try the same challenge again.
+    case again
 }

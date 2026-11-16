@@ -8,6 +8,7 @@ Setup (once):
 Run:
     tools/.venv/bin/python tools/make_voices.py            # only lines that don't have a recording yet
     tools/.venv/bin/python tools/make_voices.py --all      # redo everything
+    tools/.venv/bin/python tools/make_voices.py george     # just one Host
 The line list (tools/host_lines.json) comes from the game: in Packages/HallwayCore run
     DUMP_PATH=../../tools/host_lines.json swift test --filter testDumpScript
 Needs ffmpeg.
@@ -22,15 +23,18 @@ MODELS = os.environ.get("KOKORO_MODELS", os.path.join(HERE, "models"))
 OUT = os.path.join(ROOT, "App", "Voices")
 ALL = "--all" in sys.argv
 
-# Host: Kokoro voice, speed, language.
-HOSTS = {"lewis": ("bm_lewis", 0.92, "en-gb"), "heart": ("af_heart", 0.98, "en-us")}
-WORDS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+WORDS = {"en": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"],
+         "pt": ["um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez"]}
 # The Counter: a slow, low whisper close to your ear. The Mimic: three friendly-sounding voices.
-CREATURES = [(f"sfx_count{n}", WORDS[n - 1] + ".", "am_onyx", 0.8, "en-us", "counter") for n in range(1, 11)] + [
-    ("sfx_mimic_voice1", "Over here!", "af_nicole", 1.0, "en-us", "mimic"),
-    ("sfx_mimic_voice2", "Hello? Is someone there?", "am_echo", 1.0, "en-us", "mimic"),
-    ("sfx_mimic_voice3", "Help me. Please.", "af_sky", 0.95, "en-us", "mimic"),
-]
+# Each in English (sfx_<name>) and Portuguese (sfx_pt_<name>).
+CREATURES = []
+for lang, prefix, counter, voices, phrases in [
+    ("en-us", "sfx_", "am_onyx", ["af_nicole", "am_echo", "af_sky"], ["Over here!", "Hello? Is someone there?", "Help me. Please."]),
+    ("pt-br", "sfx_pt_", "pm_alex", ["pf_dora", "pm_santa", "pf_dora"], ["Aqui!", "Oi? Tem alguém aí?", "Me ajuda. Por favor."]),
+]:
+    words = WORDS["en" if lang == "en-us" else "pt"]
+    CREATURES += [(f"{prefix}count{n}", words[n - 1] + ".", counter, 0.8, lang, "counter") for n in range(1, 11)]
+    CREATURES += [(f"{prefix}mimic_voice{i + 1}", phrases[i], voices[i], 1.0, lang, "mimic") for i in range(3)]
 
 TRIM = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
         "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
@@ -57,15 +61,18 @@ def record(name, text, voice, speed, lang, fx, out_dir=OUT):
     return True
 
 
-lines = json.load(open(os.path.join(HERE, "host_lines.json")))
+hosts = json.load(open(os.path.join(HERE, "host_lines.json")))
+only = [a for a in sys.argv[1:] if not a.startswith("--")]   # e.g. "george emma": just those Hosts
 made = 0
-for host, (voice, speed, lang) in HOSTS.items():
-    for line in lines:
-        made += record(f"v_{host}_{line['id']}", line[host], voice, speed, lang, "host")
+for h in hosts:
+    if only and h["host"] not in only:
+        continue
+    for line_id, text in h["lines"].items():
+        made += record(f"v_{h['host']}_{line_id}", text, h["voice"], h["speed"], h["lang"], "host")
 sounds = os.path.join(ROOT, "App", "Sounds")
 os.makedirs(sounds, exist_ok=True)
 for name, text, voice, speed, lang, fx in CREATURES:
     made += record(name, text, voice, speed, lang, fx, sounds)
 if os.path.exists(raw):
     os.remove(raw)
-print(f"{made} new recordings ({len(lines)} lines per Host)")
+print(f"{made} new recordings ({len(hosts)} Hosts)")

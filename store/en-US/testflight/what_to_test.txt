@@ -1,5 +1,5 @@
-The first test of Hallway 24. Use headphones.
+Hallway 24, update 2. Use headphones.
 
-Please try: choosing your Host (Lewis or Heart), a whole night or as far as you get, every creature (the Drip, Static, the Crawler, the Counter and the Mimic), the shop after hours 6, 12 and 18, leaving and continuing a night, and playing with VoiceOver on.
+New: Portuguese (Brazil) for the whole game, with three Brazilian Hosts (Alex, Dora, Noel). Five new English Hosts (George, Emma, Rex, Nicole, Santa). The Echo, a music-box puzzle: play its pattern back. Four new items (Earplugs, Lucky Coin, Skeleton Key, Second Chance). A Practice Room for every creature. Volume sliders for music, background sounds and effects; background sounds are much quieter now. Static: a zap on every right swipe, the buzz is fully in one ear, and the Host says how many buzzes are coming.
 
-Tell us: is any creature unfair or confusing? Are any sounds too quiet, too loud, or hard to tell apart? Is the Host fun or annoying?
+Please try: switching language, the new Hosts, the Echo, the Practice Room, the volume sliders, and the new items.

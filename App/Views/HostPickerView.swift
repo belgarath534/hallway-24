@@ -10,19 +10,22 @@ struct HostPickerView: View {
     @State private var preview: AVAudioPlayer?
 
     var body: some View {
+        let t = settings.t
         List {
             Section {
                 Text(firstTime
-                     ? "Welcome. Before you go in, choose your Host. They'll guide you through the night. Listen to both, then pick one. You can change later in the menu."
-                     : "Choose who runs the hallway. Your saved night keeps going with the new Host.")
+                     ? t("Welcome. Before you go in, choose your Host. They'll guide you through the night. Listen to a few, then pick one. You can change later in the menu.",
+                         "Boas-vindas. Antes de entrar, escolha seu apresentador. Ele vai te guiar pela noite. Escute alguns e escolha um. Dá para trocar depois no menu.")
+                     : t("Choose who runs the hallway. Your saved night keeps going with the new Host.",
+                         "Escolha quem comanda o corredor. Sua noite salva continua com o novo apresentador."))
             }
-            ForEach(Host.allCases, id: \.self) { host in
+            ForEach(Host.all(settings.language), id: \.self) { host in
                 Section(host.name) {
                     Text(host.about).foregroundStyle(.secondary)
                     Button {
                         listen(host)
                     } label: {
-                        Label("Listen to \(host.name)", systemImage: "speaker.wave.2.fill")
+                        Label(t("Listen to \(host.name)", "Ouvir \(host.name)"), systemImage: "speaker.wave.2.fill")
                     }
                     Button {
                         preview?.stop()
@@ -30,13 +33,14 @@ struct HostPickerView: View {
                         settings.hostChosen = true
                         if !firstTime { dismiss() }
                     } label: {
-                        Label(settings.host == host && settings.hostChosen ? "\(host.name) (your Host)" : "Choose \(host.name)",
-                              systemImage: settings.host == host && settings.hostChosen ? "checkmark.circle.fill" : "circle")
+                        let chosen = settings.host == host && settings.hostChosen
+                        Label(chosen ? t("\(host.name) (your Host)", "\(host.name) (seu apresentador)") : t("Choose \(host.name)", "Escolher \(host.name)"),
+                              systemImage: chosen ? "checkmark.circle.fill" : "circle")
                     }
                 }
             }
         }
-        .navigationTitle(firstTime ? "Hallway 24" : "Your Host")
+        .navigationTitle(firstTime ? "Hallway 24" : t("Your Host", "Seu Apresentador"))
         .onDisappear { preview?.stop() }
     }
 
