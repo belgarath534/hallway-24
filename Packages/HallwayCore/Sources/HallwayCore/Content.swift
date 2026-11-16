@@ -269,7 +269,8 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
 
     /// Spoken sounds have one recording per language.
     public var spoken: Bool {
-        ["count", "mimic_voice", "echo_say", "twin_", "hint_twins"].contains { rawValue.hasPrefix($0) }
+        (rawValue.hasPrefix("count") && !rawValue.hasPrefix("counter"))
+            || ["mimic_voice", "echo_say", "twin_", "hint_twins"].contains { rawValue.hasPrefix($0) }
     }
 
     /// The sound the Echo makes for a move.
