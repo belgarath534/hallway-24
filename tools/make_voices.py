@@ -47,6 +47,9 @@ for lang, prefix, counter, voices, phrases in [
     whisperer = "af_nicole" if lang == "en-us" else "pf_dora"
     CREATURES += [(f"{prefix}echo_say_{m}", w + ".", whisperer, 0.9, lang, "whisper")
                   for m, w in zip(ECHO_MOVES, ECHO_WORDS["en" if lang == "en-us" else "pt"])]
+    # The Sleeper's notes: the number on each one, whispered (1 to 6).
+    CREATURES += [(f"{prefix}num{n}", WORDS["en" if lang == "en-us" else "pt"][n - 1].capitalize() + ".", whisperer, 0.85, lang, "whisper")
+                  for n in range(1, 7)]
 
 TRIM = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
         "silenceremove=start_periods=1:start_threshold=-45dB,areverse")

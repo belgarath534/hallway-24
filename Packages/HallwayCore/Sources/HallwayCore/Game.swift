@@ -413,6 +413,11 @@ public final class Game {
         if run.hour >= Creature.echo.firstHour, run.rng.chance(0.14), let i = doors.firstIndex(where: { $0.room.isSafe }) {
             doors[i] = Door(room: .creature(.echo), hint: .hintEcho)
         }
+        // Later on, a good room is sometimes the Sleeper's: a sneaking puzzle that pays even better.
+        if run.hour >= Creature.sleeper.firstHour, run.rng.chance(0.08),
+           let i = doors.firstIndex(where: { $0.room.isSafe }) {
+            doors[i] = Door(room: .creature(.sleeper), hint: .hintSleeper)
+        }
         return doors
     }
 
@@ -548,9 +553,10 @@ public final class Game {
         case .survived:
             run.stats.survived += 1
             if let creature { events.append(.achievement(creature == .echo ? "solve_echo" : "survive_\(creature.rawValue)")) }
-            if creature == .echo {
-                let n = earn(4 + Int((2 * difficulty).rounded()))
-                beats += [.event(.haptic(.success)), .event(.play(SoundCue(.coins))), .say("echo_reward"), .say(tokenLine(n)),
+            if creature == .echo || creature == .sleeper {
+                let n = earn(creature == .sleeper ? 6 + Int((2 * difficulty).rounded()) : 4 + Int((2 * difficulty).rounded()))
+                beats += [.event(.haptic(.success)), .event(.play(SoundCue(.coins))),
+                          .say(creature == .sleeper ? "sleeper_reward" : "echo_reward"), .say(tokenLine(n)),
                           .wait(0.3), .step(.finishRoom)]
             } else {
                 let n = earn(1)
@@ -653,6 +659,7 @@ extension Creature {
         case .breather: return .hintBreather
         case .twins: return .hintTwins
         case .lights: return .hintLights
+        case .sleeper: return .hintSleeper
         }
     }
 }

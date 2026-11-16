@@ -387,7 +387,7 @@ final class EncounterTests: XCTestCase {
     }
 
     func testNewCreaturesCanBeBeatenAndLost() {
-        for c in [Creature.neighbor, .lullaby, .breather, .twins, .lights] {
+        for c in [Creature.neighbor, .lullaby, .breather, .twins, .lights, .sleeper] {
             for d in [0.0, 0.5, 1.0] {
                 for seed in 1...5 as ClosedRange<UInt64> {
                     XCTAssertEqual(play(c, d, seed: seed).outcome, .survived, "\(c) at \(d), seed \(seed)")
@@ -435,5 +435,48 @@ final class EncounterTests: XCTestCase {
         var sounds = 0
         for _ in 0..<60 { sounds += e.update(1.0 / 30).filter { if case .play = $0 { return true }; return false }.count }
         XCTAssertEqual(sounds, 2)
+    }
+
+    /// The Sleeper: touching while it stirs is noise; the second time, it wakes up.
+    func testSleeperWakesIfYouMoveWhileItStirs() {
+        var e = Encounter(creature: .sleeper, difficulty: 0.5, rng: RNG(seed: 3))
+        var noises = 0
+        for _ in 0..<(30 * 120) where e.outcome == nil {
+            _ = e.update(1.0 / 30)
+            if e.stirring, e.time > e.stirFrom + 0.5, noises < 2 {
+                _ = e.input(.left)
+                noises += 1
+            }
+        }
+        XCTAssertEqual(e.outcome, .caught("caught_sleeper"))
+        XCTAssertEqual(e.mistakes, 2)
+    }
+
+    /// Dialing a wrong number counts as noise, and you start the number again.
+    func testSleeperWrongNumber() {
+        var e = Encounter(creature: .sleeper, difficulty: 0.5, rng: RNG(seed: 5))
+        var wrongOnce = false
+        for _ in 0..<(30 * 120) where e.outcome == nil {
+            _ = e.update(1.0 / 30)
+            if e.dialing, !wrongOnce, !e.stirring, e.time > e.lastAction + 0.5 {
+                // One tap too many for the first number.
+                for _ in 0...e.code[0] { _ = e.input(.tap) }
+                wrongOnce = true
+                continue
+            }
+            if let need = e.nextRequired, e.time >= need.from + 0.35 { _ = e.input(need.input) }
+        }
+        XCTAssertEqual(e.outcome, .survived)
+        XCTAssertEqual(e.mistakes, 1)
+    }
+
+    /// Searching finds exactly the numbers it needs, and every spot can be searched twice.
+    func testSleeperHidesTheNumbers() {
+        for seed in 1...20 as ClosedRange<UInt64> {
+            let e = Encounter(creature: .sleeper, difficulty: 1, rng: RNG(seed: seed))
+            XCTAssertEqual(e.hidden.flatMap { $0 }.filter { $0 > 0 }.count, 3)
+            let easy = Encounter(creature: .sleeper, difficulty: 0.2, rng: RNG(seed: seed))
+            XCTAssertEqual(easy.hidden.flatMap { $0 }.filter { $0 > 0 }.count, 2)
+        }
     }
 }

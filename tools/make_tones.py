@@ -131,6 +131,82 @@ def whoosh(seconds=0.45):
 
 save("shove", whoosh())
 
+
+# The Sleeper: snoring (a rattly in-breath, a soft out-breath), stirring (a snort and the bed creaking),
+# searching (a rustle), a note found (paper), and the old rotary phone.
+def bandnoise(seconds, lo, hi):
+    n = rng.standard_normal(int(SR * seconds))
+    spec = np.fft.rfft(n)
+    f = np.fft.rfftfreq(len(n), 1 / SR)
+    spec[(f < lo) | (f > hi)] = 0
+    return np.fft.irfft(spec, len(n))
+
+
+def snore_sound():
+    x_in = t(1.3)
+    rattle = 1 + 0.8 * np.sin(2 * np.pi * 28 * x_in)
+    inhale = bandnoise(1.3, 70, 700) * rattle * np.sin(np.pi * x_in / 1.3) ** 1.5
+    inhale += 0.5 * np.sin(2 * np.pi * np.cumsum(55 + 10 * x_in) / SR) * rattle * np.sin(np.pi * x_in / 1.3) ** 2
+    x_out = t(0.9)
+    exhale = bandnoise(0.9, 150, 1200) * 0.35 * np.sin(np.pi * x_out / 0.9) ** 2
+    return np.concatenate([inhale, np.zeros(int(SR * 0.1)), exhale])
+
+
+def creak(seconds=0.7):
+    x = t(seconds)
+    f = 180 + 60 * np.sin(2 * np.pi * 1.3 * x)
+    pulses = (np.sin(2 * np.pi * np.cumsum(f) / SR) > 0.95).astype(float)
+    body = np.convolve(pulses, np.exp(-np.arange(400) / 60) * np.sin(np.arange(400) * 0.18), mode="same")
+    return body * np.sin(np.pi * x / seconds)
+
+
+def stir_sound():
+    snort = bandnoise(0.35, 60, 500) * np.exp(-t(0.35) * 6) * 1.5
+    return np.concatenate([snort, np.zeros(int(SR * 0.15)), creak(), np.zeros(int(SR * 0.1)), creak(0.5) * 0.6])
+
+
+def rustle(seconds=0.5):
+    x = t(seconds)
+    grains = (rng.random(len(x)) < 0.02).astype(float) * rng.standard_normal(len(x))
+    grains = np.convolve(grains, np.exp(-np.arange(200) / 25), mode="same")
+    return (grains + 0.3 * bandnoise(seconds, 1500, 6000)) * np.sin(np.pi * x / seconds)
+
+
+def paper():
+    x = t(0.35)
+    crinkle = (rng.random(len(x)) < 0.06).astype(float) * rng.standard_normal(len(x))
+    return np.convolve(crinkle, np.exp(-np.arange(80) / 10), mode="same") * np.exp(-x * 5)
+
+
+def click(gain=1.0):
+    x = t(0.04)
+    return (np.sin(2 * np.pi * 2200 * x) * 0.6 + rng.standard_normal(len(x)) * 0.5) * np.exp(-x * 160) * gain
+
+
+def dial_return():
+    out = np.zeros(int(SR * 0.6))
+    for k in range(9):
+        c = click(0.5)
+        s0 = int(SR * (0.03 + k * 0.06))
+        out[s0:s0 + len(c)] += c
+    return out + 0.15 * bandnoise(0.6, 300, 2000) * np.sin(np.pi * t(0.6) / 0.6)
+
+
+def unlock_sound():
+    ring = sum(np.sin(2 * np.pi * f * t(0.9)) for f in (880, 1320)) * np.exp(-t(0.9) * 5) * 0.4
+    clack = np.concatenate([click(), np.zeros(int(SR * 0.12)), click(), np.zeros(int(SR * 0.2))])
+    return np.concatenate([ring, clack, bell(G5, 0.8) * 0.4])
+
+
+save("snore", snore_sound())
+save("hint_sleeper", np.concatenate([snore_sound(), np.zeros(int(SR * 0.3)), snore_sound()]), gain_db=-6)
+save("sleeper_stir", stir_sound())
+save("search", rustle())
+save("note_found", paper(), gain_db=-6)
+save("dial_click", click())
+save("dial_return", dial_return(), gain_db=-6)
+save("unlock", unlock_sound())
+
 # Static: every right swipe.
 save("zap", zap())
 print("Done.")

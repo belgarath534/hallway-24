@@ -9,6 +9,14 @@ When something finds you, the whole screen becomes the play area and you survive
 • The Counter: it counts down from ten. Don't touch anything.
 • The Mimic: it pretends to be a good room. Find the real voice.
 • The Echo: a music box puzzle. Play its pattern back.
+• The Neighbor: count its knocks and tap them back.
+• The Lullaby: tap the rhythm it hums.
+• The Breather: it circles you. When it breathes in your ear, shove it away.
+• The Twins: two voices, one lies. Trust the first.
+• The Lights: keep time with the clock in the dark.
+• The Sleeper: search a room for a phone number while something huge sleeps. When the snoring stops, freeze.
+
+Every new creature comes with three practice rounds, and the Practice Room lets you train on any of them.
 
 You have three hearts. Find bedrooms, kitchens and vaults, collect items, and spend your tokens in the Host's shop: a lighter to peek under the doors, bandages, earplugs, a lucky coin, a skeleton key, a lucky charm and a second chance.
 

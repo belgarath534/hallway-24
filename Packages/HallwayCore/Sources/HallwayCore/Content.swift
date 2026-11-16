@@ -73,6 +73,8 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
     /// Not really a creature: a music-box puzzle. Play its pattern back.
     case echo
     case neighbor, lullaby, breather, twins, lights
+    /// A sneaking puzzle: search a room for the phone number while something huge sleeps.
+    case sleeper
 
     public func name(_ l: Language) -> String {
         switch self {
@@ -87,6 +89,7 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
         case .breather: return l.t("The Breather", "O Respirador")
         case .twins: return l.t("The Twins", "As Gêmeas")
         case .lights: return l.t("The Lights", "As Luzes")
+        case .sleeper: return l.t("The Sleeper", "O Adormecido")
         }
     }
 
@@ -103,6 +106,7 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
         case .breather: return 10
         case .twins: return 14
         case .lights: return 16
+        case .sleeper: return 8
         }
     }
 
@@ -146,6 +150,9 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
         case .lights:
             return l.t("The power goes out and a clock starts ticking. Listen to the first two ticks, then tap the screen on every tick to keep the lights on. Miss two ticks, or tap off the beat twice, and the lights go out for good.",
                        "A luz acaba e um relógio começa a tiquetaquear. Escute os dois primeiros tiques, depois toque na tela em cada tique para manter as luzes acesas. Perca dois tiques, ou toque fora do ritmo duas vezes, e as luzes apagam de vez.")
+        case .sleeper:
+            return l.t("Something huge is asleep, and the door out is locked. While it snores, swipe left, right, up or down to search that part of the room; each place can be searched twice. Some places hide a note with a number, whispered to you. Tap to hear the numbers you've found. When you have them all, call the front desk on the old phone: tap once for each number (four taps for four), pause, then the next. When the snoring stops, freeze: don't touch anything until it snores again. Make noise twice and it wakes up. Get past it for lots of tokens.",
+                       "Algo enorme está dormindo, e a porta de saída está trancada. Enquanto ele ronca, deslize para esquerda, direita, cima ou baixo para procurar naquela parte do quarto; cada lugar pode ser procurado duas vezes. Alguns lugares escondem um bilhete com um número, sussurrado para você. Toque para ouvir os números que já achou. Quando tiver todos, ligue para a recepção no telefone antigo: um toque para cada número (quatro toques para quatro), uma pausa, e o próximo. Quando o ronco parar, congele: não toque em nada até ele roncar de novo. Faça barulho duas vezes e ele acorda. Passe por ele e ganhe muitas fichas.")
         }
     }
 }
@@ -259,6 +266,10 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
     case hintBreather = "hint_breather", breath = "breath", breathClose = "breath_close", shove = "shove"
     case hintTwins = "hint_twins", twinLeft = "twin_left", twinRight = "twin_right"
     case hintLights = "hint_lights", tick = "tick", lightsOff = "lights_off", lightsOn = "lights_on"
+    // The Sleeper: snoring, stirring, searching, the notes' numbers (whispered) and the old phone
+    case hintSleeper = "hint_sleeper", snore = "snore", sleeperStir = "sleeper_stir", search = "search", noteFound = "note_found"
+    case num1 = "num1", num2 = "num2", num3 = "num3", num4 = "num4", num5 = "num5", num6 = "num6"
+    case dialClick = "dial_click", dialReturn = "dial_return", unlock = "unlock"
     // Results
     case hit = "hit", charmBreak = "charm_break", survive = "survive", heartbeat = "heartbeat"
     case loseSting = "lose_sting", winSting = "win_sting"
@@ -270,8 +281,11 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
     /// Spoken sounds have one recording per language.
     public var spoken: Bool {
         (rawValue.hasPrefix("count") && !rawValue.hasPrefix("counter"))
-            || ["mimic_voice", "echo_say", "twin_", "hint_twins"].contains { rawValue.hasPrefix($0) }
+            || ["mimic_voice", "echo_say", "twin_", "hint_twins", "num"].contains { rawValue.hasPrefix($0) }
     }
+
+    /// The whispered number on one of the Sleeper's notes (1 to 6).
+    public static func num(_ n: Int) -> Sfx { [.num1, .num2, .num3, .num4, .num5, .num6][n - 1] }
 
     /// The sound the Echo makes for a move.
     public static func echo(_ input: Input) -> Sfx {
@@ -305,6 +319,8 @@ public enum Ambience: String, Codable, CaseIterable, Sendable {
 public enum Track: String, Codable, CaseIterable, Sendable {
     case menu = "mus_menu", early = "mus_early", middle = "mus_middle", late = "mus_late"
     case calm = "mus_calm", win = "mus_win", lose = "mus_lose"
+    /// Only while the Sleeper sleeps: quiet and tense.
+    case sleeper = "mus_sleeper"
 }
 
 public enum Haptic: String, Codable, Sendable {

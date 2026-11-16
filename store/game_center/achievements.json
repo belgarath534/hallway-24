@@ -88,6 +88,14 @@
   "points": 25
  },
  {
+  "id": "survive_sleeper",
+  "title": "Don't Wake It",
+  "title_pt": "Não Acorde",
+  "detail": "Sneak past the Sleeper and call the front desk.",
+  "detail_pt": "Passe pelo Adormecido e ligue para a recepção.",
+  "points": 30
+ },
+ {
   "id": "solve_echo",
   "title": "Music Box",
   "title_pt": "Caixinha de Música",

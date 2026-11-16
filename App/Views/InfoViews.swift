@@ -123,7 +123,7 @@ struct CreditsView: View {
             Section(t("Music", "Música")) {
                 Text(t("Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0.",
                        "Kevin MacLeod (incompetech.com), licença Creative Commons: Atribuição 4.0.")
-                     + " \"Comfortable Mystery 4\", \"Lightless Dawn\", \"Penumbra\", \"Ossuary 6 - Air\", \"Clean Soul\", \"Lasting Hope\", \"Darkness Speaks\".")
+                     + " \"Comfortable Mystery 4\", \"Lightless Dawn\", \"Penumbra\", \"Ossuary 6 - Air\", \"Clean Soul\", \"Lasting Hope\", \"Darkness Speaks\", \"Unseen Horrors\".")
             }
             Section(t("Sounds", "Sons")) {
                 Text("\"Abandoned Building Ambience\" by tcarisland (OpenGameArt), CC BY 3.0.")

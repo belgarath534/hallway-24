@@ -21,6 +21,7 @@ public struct Achievement: Sendable {
         a("survive_breather", ("Personal Space", "Espaço Pessoal"), ("Survive the Breather.", "Sobreviva ao Respirador."), 20),
         a("survive_twins", ("First Voice", "Primeira Voz"), ("Survive the Twins.", "Sobreviva às Gêmeas."), 25),
         a("survive_lights", ("Keep the Lights On", "Luz Acesa"), ("Survive the Lights.", "Sobreviva às Luzes."), 25),
+        a("survive_sleeper", ("Don't Wake It", "Não Acorde"), ("Sneak past the Sleeper and call the front desk.", "Passe pelo Adormecido e ligue para a recepção."), 30),
         a("solve_echo", ("Music Box", "Caixinha de Música"), ("Solve the Echo's puzzle.", "Resolva o enigma do Eco."), 20),
         a("lighter", ("Peeking", "Espiando"), ("Use the lighter to look under the doors.", "Use o isqueiro para espiar embaixo das portas."), 10),
         a("shopper", ("Good Customer", "Bom Cliente"), ("Buy something in the Host's shop.", "Compre algo na loja do apresentador."), 10),

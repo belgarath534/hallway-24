@@ -1,5 +1,5 @@
-Hallway 24, update 2. Use headphones.
+New: the Sleeper (from hour 8). Something huge sleeps in a locked room. While it snores, swipe to search; some places hide a note with a number. Tap to hear the numbers you found. Then dial them on the old phone: one tap per number, a pause between numbers. When the snoring stops, freeze. It has its own tense music.
 
-New: Portuguese (Brazil) for the whole game, with three Brazilian Hosts (Alex, Dora, Noel). Five new English Hosts (George, Emma, Rex, Nicole, Santa). The Echo, a music-box puzzle: play its pattern back. Four new items (Earplugs, Lucky Coin, Skeleton Key, Second Chance). A Practice Room for every creature. Volume sliders for music, background sounds and effects; background sounds are much quieter now. Static: a zap on every right swipe, the buzz is fully in one ear, and the Host says how many buzzes are coming.
+Also new: 3D sound with headphones (Settings, Headphones, Test 3D sound), Siri and Shortcuts ("Start a night in Hallway 24", "What's my record in Hallway 24"), stronger vibrations, and a Game Center challenge.
 
-Please try: switching language, the new Hosts, the Echo, the Practice Room, the volume sliders, and the new items.
+Please try: the Sleeper (Practice Room has it too), the 3D sound test with headphones, and Siri.

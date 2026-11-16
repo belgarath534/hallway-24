@@ -65,6 +65,21 @@ public struct Encounter: Sendable {
     // The Lights
     var ticks: [Double] = []
     var hit: [Bool] = []
+    // The Sleeper
+    static let spots: [Input] = [.left, .right, .up, .down]
+    /// What's hidden in each spot, two layers deep: a number (1 to 6), or 0 for nothing.
+    var hidden: [[Int]] = []
+    var searchedLayers: [Int] = [0, 0, 0, 0]
+    var code: [Int] = []
+    var needed = 3
+    var dialing = false
+    var dialed: [Int] = []
+    var lastAction = -10.0
+    var nextSnore = 0.0
+    var nextStir = 0.0
+    var stirFrom = Double.infinity
+    var stirTo = Double.infinity
+    var wakeAt = Double.infinity
 
     static let actions: [Input] = [.left, .right, .up, .down, .tap]
 
@@ -86,6 +101,7 @@ public struct Encounter: Sendable {
         case .breather: buildBreather()
         case .twins: buildTwins()
         case .lights: buildLights()
+        case .sleeper: startSleeper()
         }
         schedule.sort { $0.time < $1.time }
     }
@@ -110,6 +126,7 @@ public struct Encounter: Sendable {
         if creature == .neighbor { return out + neighborUpdate() }
         if creature == .lullaby { return out + lullabyUpdate() }
         if creature == .lights { return out + lightsUpdate() }
+        if creature == .sleeper { return out + sleeperUpdate() }
         for i in rules.indices where !rules[i].done {
             if case .require = rules[i].kind, time > rules[i].to {
                 outcome = .caught(rules[i].reason)
@@ -131,6 +148,7 @@ public struct Encounter: Sendable {
         if creature == .neighbor { return neighborInput(input) }
         if creature == .lullaby { return lullabyInput(input) }
         if creature == .lights { return lightsInput(input) }
+        if creature == .sleeper { return sleeperInput(input) }
         if creature == .mimic, input == .tap {
             replayMimic(from: time + 0.2)
             return []
@@ -171,6 +189,15 @@ public struct Encounter: Sendable {
             guard listenFrom.isFinite, noteIndex < beats.count else { return nil }
             guard let t0 = firstTap else { return (.tap, listenFrom, deadline, false) }
             return (.tap, t0 + beats[noteIndex], t0 + beats[noteIndex] + tolerance, true)
+        case .sleeper:
+            // Waits out every stir; searches the next place, then dials the number.
+            guard !stirring, outcome == nil, time >= 1 else { return nil }
+            if dialing {
+                guard dialed.count < code.count, taps < code[dialed.count] else { return nil }
+                return (.tap, lastAction + 0.35, .infinity, false)
+            }
+            guard let i = searchedLayers.firstIndex(where: { $0 < 2 }) else { return nil }
+            return (Self.spots[i], lastAction + 1.2, .infinity, false)
         case .lights:
             guard let i = ticks.indices.first(where: { $0 >= 2 && !hit[$0] && ticks[$0] + tolerance > time }) else { return nil }
             return (.tap, ticks[i], ticks[i] + tolerance, true)
@@ -658,5 +685,146 @@ public struct Encounter: Sendable {
         }
         return [.play(SoundCue(.echoWrong, volume: 0.6)), .haptic(.warning),
                 .caption(t2("The lights flicker. One more miss…", "As luzes piscam. Mais um erro…"))]
+    }
+
+    // MARK: The Sleeper
+
+    /// Mistakes allowed before it wakes: one (two while practicing).
+    private var sleeperMistakes: Int { guided ? 3 : 2 }
+    var stirring: Bool { time >= stirFrom && time < stirTo }
+
+    private mutating func startSleeper() {
+        let d = difficulty
+        end = .infinity
+        needed = guided || d < 0.4 ? 2 : 3
+        // Hide the numbers in different spots and layers; the rest is empty.
+        var slots = (0..<8).map { $0 }
+        hidden = Array(repeating: [0, 0], count: 4)
+        for _ in 0..<needed {
+            let k = slots.remove(at: rng.int(0, slots.count - 1))
+            hidden[k / 2][k % 2] = rng.int(1, 6)
+        }
+        at(0, .music(.sleeper))
+        at(0.3, .caption(t2("Snoring. Search while it sleeps. Freeze when it stops.", "Roncos. Procure enquanto ele dorme. Congele quando parar.")))
+        nextSnore = 0.8
+        nextStir = guided ? 9 : rng.range(5.5, 8)
+        // It wakes up on its own eventually.
+        wakeAt = 100
+    }
+
+    private func pan(_ spot: Input) -> (Double, Bool) {
+        switch spot {
+        case .left: return (-0.8, false)
+        case .right: return (0.8, false)
+        case .down: return (0, true)   // behind you
+        default: return (0, false)     // in front of you
+        }
+    }
+
+    /// A sound you made while it was awake (a small grace moment as it starts stirring).
+    private mutating func sleeperNoise() -> [GameEvent] {
+        mistakes += 1
+        if mistakes >= sleeperMistakes {
+            outcome = .caught("caught_sleeper")
+            return []
+        }
+        return [.play(SoundCue(.sleeperStir, volume: 1)), .haptic(.warning),
+                .caption(t2("It heard you. One more sound and it wakes up.", "Ele ouviu. Mais um barulho e ele acorda."))]
+    }
+
+    private mutating func sleeperInput(_ input: Input) -> [GameEvent] {
+        guard time > 0.6 else { return [] }
+        if stirring && time > stirFrom + 0.35 { lastAction = time; return sleeperNoise() }
+        lastAction = time
+        if dialing {
+            guard input == .tap else { return [] }
+            taps += 1
+            judgeAt = time + 1.5
+            return [.play(SoundCue(.dialClick, volume: 0.7)), .haptic(.light), .caption("\(taps)")]
+        }
+        if input == .tap {
+            // Whispers the numbers found so far.
+            guard !code.isEmpty else {
+                return [.caption(t2("No numbers yet. Swipe to search.", "Nenhum número ainda. Deslize para procurar."))]
+            }
+            var out: [GameEvent] = [.caption(code.map(String.init).joined(separator: " "))]
+            for (k, n) in code.enumerated() { at(time + 0.1 + 0.8 * Double(k), .play(SoundCue(.num(n), volume: 0.8))) }
+            schedule.sort { $0.time < $1.time }
+            out.append(.haptic(.light))
+            return out
+        }
+        guard let i = Self.spots.firstIndex(of: input) else { return [] }
+        let (p, behind) = pan(input)
+        var out: [GameEvent] = [.play(SoundCue(.search, pan: p, volume: 0.6, behind: behind)), .haptic(.light)]
+        guard searchedLayers[i] < 2 else {
+            return out + [.caption(t2("Nothing more there.", "Não tem mais nada aí."))]
+        }
+        let n = hidden[i][searchedLayers[i]]
+        searchedLayers[i] += 1
+        guard n > 0 else { return out + [.caption(t2("Nothing.", "Nada."))] }
+        code.append(n)
+        out += [.play(SoundCue(.noteFound, pan: p, volume: 0.7, behind: behind)),
+                .caption(t2("A note: \(n)", "Um bilhete: \(n)"))]
+        at(time + 0.6, .play(SoundCue(.num(n), pan: p * 0.5, volume: 0.9, behind: behind)))
+        if code.count == needed {
+            dialing = true
+            taps = 0
+            at(time + 1.6, .caption(t2("That's every number. Dial: one tap for each number, then wait.",
+                                       "Esses são todos os números. Disque: um toque para cada número, depois espere.")))
+        }
+        schedule.sort { $0.time < $1.time }
+        return out
+    }
+
+    private mutating func sleeperUpdate() -> [GameEvent] {
+        var out: [GameEvent] = []
+        if time >= wakeAt {
+            outcome = .caught("caught_sleeper")
+            return out
+        }
+        // Stirring: the snoring stops. Then it settles and snores again.
+        if !stirring, time >= nextStir, stirTo.isInfinite || time >= stirTo {
+            stirFrom = time
+            stirTo = time + (guided ? 3.5 : rng.range(2.5, 3.5 + difficulty))
+            nextStir = stirTo + rng.range(5, 9) - 2 * difficulty
+            out += [.play(SoundCue(.sleeperStir, pan: 0.2, volume: 0.8)), .haptic(.heartbeat),
+                    .caption(t2("The snoring stops. Freeze!", "O ronco parou. Congele!"))]
+        } else if stirTo.isFinite, time >= stirTo {
+            stirFrom = .infinity
+            stirTo = .infinity
+            nextSnore = time
+            // In the middle of a number: you get time to finish it.
+            if dialing, taps > 0 { judgeAt = max(judgeAt, time + 1.5) }
+            out.append(.caption(t2("Snoring again.", "Roncando de novo.")))
+        }
+        if !stirring, time >= nextSnore {
+            out.append(.play(SoundCue(.snore, pan: 0.2, volume: 0.75)))
+            nextSnore = time + 2.6
+        }
+        // Each number is dialed when you stop tapping.
+        // The phone waits while you're frozen.
+        if dialing, time >= judgeAt, !stirring {
+            judgeAt = .infinity
+            let want = code[dialed.count]
+            if taps == want {
+                dialed.append(taps)
+                taps = 0
+                out.append(.play(SoundCue(.dialReturn, volume: 0.6)))
+                if dialed.count == code.count {
+                    outcome = .survived
+                    out += [.play(SoundCue(.unlock)), .caption(t2("The front desk answers. The lock clicks open. Tiptoe out.",
+                                                                     "A recepção atende. A tranca abre. Saia na ponta dos pés."))]
+                }
+            } else {
+                dialed = []
+                taps = 0
+                out.append(.play(SoundCue(.dialReturn, volume: 0.6)))
+                out += sleeperNoise()
+                if outcome == nil {
+                    out.append(.caption(t2("Wrong number. Dial again from the first number.", "Número errado. Disque de novo desde o primeiro número.")))
+                }
+            }
+        }
+        return out
     }
 }
