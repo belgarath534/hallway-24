@@ -290,6 +290,8 @@ extension HostScript {
         x("found_earplugs", "Earplugs.", "Earplugs!"),
         x("found_coin", "A lucky coin.", "A lucky coin!"),
         x("found_key", "A skeleton key.", "A skeleton key!"),
+        x("last_heart_1", "One heart left, and something is coming. Steady now.", "Oh no, oh no, only one heart and something's coming! You can do it!"),
+        x("last_heart_2", "Careful. This could be the last thing you ever hear.", "Last heart! I'm not watching! Okay, I'm watching!"),
         x("practice_welcome", "The practice room. Nothing in here can truly hurt you. Probably.",
           "The practice room! Nothing in here can really hurt you. I think!"),
     ] + more.enumerated().map { i, n in x("tokens_\(i + 4)", n.prefix(1).uppercased() + n.dropFirst() + " tokens.", n.prefix(1).uppercased() + n.dropFirst() + " tokens!") }

@@ -104,6 +104,8 @@ extension HostScript {
         "caught_mimic": "Voz errada. Aquele era o Imitador.",
         "caught_echo": "Três erros. A caixinha de música grita, e algo escuta.",
         "echo_reward": "A caixinha de música ficou satisfeita. Ela paga bem.",
+        "last_heart_1": "Só um coração, e algo está vindo. Calma.",
+        "last_heart_2": "Cuidado. Isso pode ser a última coisa que você vai ouvir.",
         // Resultados
         "survived_1": "Você sobreviveu. Muito bem.",
         "survived_2": "Ainda vivo. Impressionante.",
@@ -154,6 +156,17 @@ extension HostScript {
         "doors_5": "Mais duas portas. Elas nunca acabam, sabe.",
         "tease_3": "Confesso que gosto muito da nossa companhia.",
         "win_2": "Amanheceu. Você sobreviveu à noite. Quase sinto orgulho. Quase.",
+        "caught_drip_early": "Cedo demais. Ela ouviu a porta do armário. Que pena.",
+        "caught_drip_late": "Tarde demais. Ela te encontrou. Era só esperar o splash.",
+        "caught_static": "A estática te pegou. Para longe do zumbido, lembra? Sempre para longe.",
+        "caught_crawler_early": "Você correu antes da hora. Ele adora uma perseguição.",
+        "caught_crawler_late": "Ele rosnou. Isso, meu caro, era a hora de correr.",
+        "caught_crawler_moved": "Você se mexeu. Ele ouviu. Eles sempre ouvem.",
+        "caught_counter": "Você se mexeu. O Contador odeia ser interrompido. Como eu.",
+        "caught_mimic": "Voz errada. Aquele era o Imitador. Ele imita muito bem, eu sei.",
+        "caught_echo": "Três erros. A caixinha grita, e algo escuta. Que deselegante.",
+        "last_heart_1": "Um coração só, e algo se aproxima. Mantenha a calma. Eu mantenho.",
+        "last_heart_2": "Cuidado. Seria uma pena perder você agora. Uma pena mesmo.",
     ]
 
     static let dora: [String: String] = [
@@ -216,6 +229,17 @@ extension HostScript {
         "late_1": "Faz séculos que ninguém chega tão longe! Tô ficando nervosa! Por você!",
         "late_2": "As portas tão ficando mais altas! Percebeu?",
         "late_3": "Você não quer ir embora de manhã, quer?",
+        "caught_drip_early": "Ai, cedo demais! Ela ouviu o armário!",
+        "caught_drip_late": "Demorou demais! Ela te achou! Ai, ai!",
+        "caught_static": "Zap! Era pra fugir do zumbido, bobinho!",
+        "caught_crawler_early": "Você correu cedo! Agora ele quer brincar de pega-pega!",
+        "caught_crawler_late": "Ele rosnou! Rosnou quer dizer corre!",
+        "caught_crawler_moved": "Você mexeu! Ele ouviu! Ai, que nervoso!",
+        "caught_counter": "Você mexeu! O Contador ficou bravinho!",
+        "caught_mimic": "Voz errada! Era o Imitador! Ele é tão bonzinho fingindo, né?",
+        "caught_echo": "Três erros! A caixinha gritou! Que barulhão!",
+        "last_heart_1": "Só um coração e tem alguma coisa vindo! Eu acredito em você!",
+        "last_heart_2": "Último coração! Não vou olhar! Tá, vou olhar sim!",
     ]
 
     static let noel: [String: String] = [
@@ -278,5 +302,16 @@ extension HostScript {
         "late_1": "Ninguém chega tão longe! Ho ho! Tô nervoso!",
         "late_2": "As portas tão ficando mais altas! Blim blém!",
         "late_3": "Você não pode ir embora de manhã! Aqui o Natal é eterno! Ho ho!",
+        "caught_drip_early": "Ho ho! Cedo demais! Presente de grego!",
+        "caught_drip_late": "Ho ho! Tarde demais! Ela te achou embaixo da árvore!",
+        "caught_static": "Ho ho! Choque de Natal! Era pra fugir do zumbido!",
+        "caught_crawler_early": "Ho ho! Correu cedo! Agora é pega-pega de Natal!",
+        "caught_crawler_late": "Ho ho! Ele rosnou e você ficou parado! Carvão!",
+        "caught_crawler_moved": "Ho ho! Mexeu! Ele ouviu os sininhos!",
+        "caught_counter": "Ho ho! Mexeu! O Contador perdeu a conta! E a paciência!",
+        "caught_mimic": "Ho ho! Voz errada! Era o Imitador fantasiado!",
+        "caught_echo": "Ho ho! Três erros! A caixinha gritou mais alto que eu!",
+        "last_heart_1": "Ho ho! Último coração! Que emoção! Tem algo vindo!",
+        "last_heart_2": "Ho ho ho! Um coração só! O melhor presente seria sobreviver!",
     ]
 }

@@ -441,8 +441,9 @@ public final class Game {
             pending = Encounter(creature: c, difficulty: difficulty, rng: RNG(seed: run.rng.next()), language: language)
             var b: [Beat] = [.event(.music(nil)), .event(.ambience(nil)), .event(.caption(c.name(language)))]
             if practice == nil {
-                b += [.event(.play(SoundCue(c == .echo ? .hintEcho : .heartbeat))), .event(.haptic(.heartbeat)),
-                      .say(first ? "learn_\(c.rawValue)" : "meet_\(c.rawValue)")]
+                b += [.event(.play(SoundCue(c == .echo ? .hintEcho : .heartbeat))), .event(.haptic(.heartbeat))]
+                if run.health == 1, run.rng.chance(0.7) { b.append(.say(variant("last_heart"))) }
+                b.append(.say(first ? "learn_\(c.rawValue)" : "meet_\(c.rawValue)"))
             }
             if c == .staticBuzz, let n = pending?.rounds { b.append(.say("static_\(n)")) }
             beats += b + [.wait(0.3), .step(.encounter(c))]

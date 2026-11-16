@@ -2,6 +2,17 @@
 /// rules, numbers and creature instructions come from Lewis's script.
 extension HostScript {
     static let george: [String: String] = [
+        "caught_drip_early": "Ah. You hid too soon. Mister Pemberton did that too. Once.",
+        "caught_drip_late": "Too slow. It found you. I'll fetch a mop.",
+        "caught_static": "The static got you. Away from the buzz, dear. Always away.",
+        "caught_crawler_early": "You ran too soon. It does so love a chase.",
+        "caught_crawler_late": "It growled. That was your cue to run, I'm afraid.",
+        "caught_crawler_moved": "You moved. It heard you. They always do.",
+        "caught_counter": "You moved. The Counter hates to lose count. So do I.",
+        "caught_mimic": "Wrong voice. That was the Mimic. Fooled me once, too.",
+        "caught_echo": "Three mistakes. The music box shrieks. It used to play so sweetly.",
+        "last_heart_1": "One heart left, and something's coming. Steady. Steady.",
+        "last_heart_2": "Careful now. I've only just learned your name.",
         "intro_1": "Ah. A new guest. Come in, come in. I'm George. I look after the hallway. Have done for a very long time. Stay twenty four hours, three pairs of doors each hour. That's all.",
         "intro_4": "Three hearts, you have. The last fellow had three as well. Well. Let's begin, shall we.",
         "welcome_back": "You came back. They always come back. Sit down, sit down. Where were we.",
@@ -64,6 +75,17 @@ extension HostScript {
     ]
 
     static let emma: [String: String] = [
+        "caught_drip_early": "Premature. I'll note that in your chart.",
+        "caught_drip_late": "Too slow. Your reaction time is unacceptable.",
+        "caught_static": "Wrong direction. Away from the buzz. I said it clearly.",
+        "caught_crawler_early": "You ran before the growl. Impatient patient.",
+        "caught_crawler_late": "It growled. You didn't run. Inexcusable.",
+        "caught_crawler_moved": "You moved. I told you to stay still. Twice.",
+        "caught_counter": "You moved. Complete stillness, I said. Complete.",
+        "caught_mimic": "Wrong voice. Have your hearing checked.",
+        "caught_echo": "Three mistakes. Concentration, please.",
+        "last_heart_1": "One heart left. Critical condition. Do exactly as I say.",
+        "last_heart_2": "Your vitals are failing. Don't you dare die on my shift.",
         "intro_1": "Good evening. I'm Emma, the night nurse. You're my patient now. Twenty four hours, three pairs of doors every hour. Follow my instructions and you may survive.",
         "intro_4": "You have three hearts. I'll be monitoring them. Closely. We begin now.",
         "welcome_back": "You discharged yourself early. That was unwise. Back to your treatment.",
@@ -126,6 +148,17 @@ extension HostScript {
     ]
 
     static let rex: [String: String] = [
+        "caught_drip_early": "Dude. You opened the locker before the splash. Come on.",
+        "caught_drip_late": "Splash means hide, man. It's not complicated.",
+        "caught_static": "Away from the buzz. Away. I'm not repeating it again. Probably.",
+        "caught_crawler_early": "You ran too early. Now it's chasing you. Great.",
+        "caught_crawler_late": "It growled. You just stood there. Cool. Cool.",
+        "caught_crawler_moved": "You moved. It heard. Classic.",
+        "caught_counter": "You touched the screen. The one thing. The one thing, man.",
+        "caught_mimic": "Wrong voice. That's the Mimic. Even I knew that.",
+        "caught_echo": "Three mistakes. Now the music box is screaming. Thanks for that.",
+        "last_heart_1": "One heart left. Something's coming. I'm gonna need a bigger form.",
+        "last_heart_2": "Last heart. Don't die, okay? The paperwork is insane.",
         "intro_1": "Oh. Great. A guest. I'm Rex, night security. You gotta stay twenty four hours. Three pairs of doors an hour. Pick one. Try not to scream, I'm on break.",
         "intro_4": "Three hearts. Lose 'em all and it's paperwork for me. So. Don't. Let's go.",
         "welcome_back": "You're back. Cool. Cool cool cool. My shift's still going.",
@@ -188,6 +221,17 @@ extension HostScript {
     ]
 
     static let nicole: [String: String] = [
+        "caught_drip_early": "No, no, too early! That's what happened to me…",
+        "caught_drip_late": "Too late. I'm sorry. It found you.",
+        "caught_static": "The buzz got you. Away from it, remember? Away.",
+        "caught_crawler_early": "You ran too soon. It likes it when you run.",
+        "caught_crawler_late": "It growled. You should have run. Run next time. Please.",
+        "caught_crawler_moved": "You moved. Shh. It heard you.",
+        "caught_counter": "You moved. It doesn't forgive that. I know.",
+        "caught_mimic": "That was the Mimic. It used my voice once.",
+        "caught_echo": "Three mistakes. The music box screams. I hate that sound.",
+        "last_heart_1": "One heart left. Something's coming. Hold my hand.",
+        "last_heart_2": "Please don't stay here like me. Please.",
         "intro_1": "Hi. You can hear me? Good. I'm Nicole. I was a guest here too, once. Stay twenty four hours. Three pairs of doors every hour. I'll help you. I promise.",
         "intro_4": "You have three hearts. I had three, too. Let's go. Stay close.",
         "welcome_back": "You came back. I waited. I always wait.",
@@ -250,6 +294,17 @@ extension HostScript {
     ]
 
     static let santa: [String: String] = [
+        "caught_drip_early": "Ho ho! Too early! Naughty, naughty!",
+        "caught_drip_late": "Ho ho! Too late! It found you under the tree!",
+        "caught_static": "Ho ho! A Christmas shock! Away from the buzz!",
+        "caught_crawler_early": "Ho ho! You ran too soon! Now it's a chase!",
+        "caught_crawler_late": "Ho ho! It growled and you just stood there! Coal for you!",
+        "caught_crawler_moved": "Ho ho! You moved! It heard your jingle bells!",
+        "caught_counter": "Ho ho! You moved! The Counter lost count! And its temper!",
+        "caught_mimic": "Ho ho! Wrong voice! The Mimic in a Santa hat!",
+        "caught_echo": "Ho ho! Three mistakes! That music box screams louder than my reindeer!",
+        "last_heart_1": "Ho ho! Last heart! How exciting! Something's coming!",
+        "last_heart_2": "Ho ho ho! One heart left! What a present it would be if you survived!",
         "intro_1": "Ho ho ho! Welcome, welcome! I'm Santa, your host! Stay twenty four hours, three pairs of doors every hour, and I'll be watching! I'm always watching! Ho ho!",
         "intro_4": "Three hearts! Like three little presents! Let's see how long you keep them! Ho ho ho!",
         "welcome_back": "Ho ho! You came back! I knew you would! You're on my list!",
