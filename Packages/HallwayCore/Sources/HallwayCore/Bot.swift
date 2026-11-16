@@ -46,7 +46,9 @@ public struct BotPlayer: Sendable {
             }
             switch mistake {
             case .late: return nil
-            case .touch: return e.time >= touchAt && e.time < touchAt + 0.04 ? .tap : nil
+            case .touch:
+                // A tap the creature didn't ask for (on the Neighbor, the Lullaby or the Lights, a wrong count or beat).
+                return e.time >= touchAt && e.time < touchAt + 0.04 ? (e.creature == .neighbor ? .up : .tap) : nil
             case .early:
                 // Presses once, too soon.
                 guard let need = e.nextRequired, e.time >= max(0.4, need.from - 0.7) else { return nil }
@@ -54,7 +56,8 @@ public struct BotPlayer: Sendable {
                 return need.input
             case .none:
                 guard let need = e.nextRequired else { return nil }
-                return e.time >= need.from + reaction ? need.input : nil
+                // A rhythm can be anticipated: tap on the beat. Everything else needs a reaction first.
+                return e.time >= need.from + (need.onBeat ? 0 : reaction) ? need.input : nil
             }
         case .shop:
             guard idleFor > 1 else { return nil }

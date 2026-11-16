@@ -2,6 +2,11 @@
 /// rules, numbers and creature instructions come from Lewis's script.
 extension HostScript {
     static let george: [String: String] = [
+        "caught_neighbor": "Wrong count. The Neighbor's let himself in. He always does.",
+        "caught_lullaby": "Off the beat. I used to hum that one to Mister Pemberton.",
+        "caught_breather": "You didn't push it away. It's been breathing down my neck for years.",
+        "caught_twins": "You followed the second one. The second one always lies, dear.",
+        "caught_lights": "Lost the beat. I'll fetch a candle. Too late, I suppose.",
         "caught_drip_early": "Ah. You hid too soon. Mister Pemberton did that too. Once.",
         "caught_drip_late": "Too slow. It found you. I'll fetch a mop.",
         "caught_static": "The static got you. Away from the buzz, dear. Always away.",
@@ -75,6 +80,11 @@ extension HostScript {
     ]
 
     static let emma: [String: String] = [
+        "caught_neighbor": "Incorrect count. Basic arithmetic, patient.",
+        "caught_lullaby": "Arrhythmic. I'd check your pulse, but I suspect it's worse.",
+        "caught_breather": "You failed to remove the intruder. Unacceptable.",
+        "caught_twins": "You followed the liar. Listen to the first voice. Always the first.",
+        "caught_lights": "You lost the rhythm. Lights out. Literally.",
         "caught_drip_early": "Premature. I'll note that in your chart.",
         "caught_drip_late": "Too slow. Your reaction time is unacceptable.",
         "caught_static": "Wrong direction. Away from the buzz. I said it clearly.",
@@ -148,6 +158,11 @@ extension HostScript {
     ]
 
     static let rex: [String: String] = [
+        "caught_neighbor": "Wrong number, man. Now he's in. Not my problem.",
+        "caught_lullaby": "Off beat. Wow. Can't even tap a song.",
+        "caught_breather": "You let it breathe on you. Gross.",
+        "caught_twins": "You listened to the second one? Dude. The second one lies.",
+        "caught_lights": "Lights out. Great. Now I can't see my paperwork either.",
         "caught_drip_early": "Dude. You opened the locker before the splash. Come on.",
         "caught_drip_late": "Splash means hide, man. It's not complicated.",
         "caught_static": "Away from the buzz. Away. I'm not repeating it again. Probably.",
@@ -221,6 +236,11 @@ extension HostScript {
     ]
 
     static let nicole: [String: String] = [
+        "caught_neighbor": "Wrong count. It came through the wall. It did that to me too.",
+        "caught_lullaby": "Off the beat. She used to sing that to me.",
+        "caught_breather": "It breathed you in. I know how that feels.",
+        "caught_twins": "You followed the liar. They're my sisters. The second one always lies.",
+        "caught_lights": "It's dark now. Don't be scared. I'm here. I'm always here.",
         "caught_drip_early": "No, no, too early! That's what happened to me…",
         "caught_drip_late": "Too late. I'm sorry. It found you.",
         "caught_static": "The buzz got you. Away from it, remember? Away.",
@@ -294,6 +314,11 @@ extension HostScript {
     ]
 
     static let santa: [String: String] = [
+        "caught_neighbor": "Ho ho! Wrong count! The Neighbor came down the wall!",
+        "caught_lullaby": "Ho ho! Off the beat! Not even a Christmas carol could save you!",
+        "caught_breather": "Ho ho! You didn't push it! Reindeer breath!",
+        "caught_twins": "Ho ho! You followed the liar! Naughty list!",
+        "caught_lights": "Ho ho! Lights out! Not even the Christmas lights are on!",
         "caught_drip_early": "Ho ho! Too early! Naughty, naughty!",
         "caught_drip_late": "Ho ho! Too late! It found you under the tree!",
         "caught_static": "Ho ho! A Christmas shock! Away from the buzz!",

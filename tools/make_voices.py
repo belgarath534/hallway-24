@@ -37,6 +37,12 @@ for lang, prefix, counter, voices, phrases in [
     words = WORDS["en" if lang == "en-us" else "pt"]
     CREATURES += [(f"{prefix}count{n}", words[n - 1] + ".", counter, 0.8, lang, "counter") for n in range(1, 11)]
     CREATURES += [(f"{prefix}mimic_voice{i + 1}", phrases[i], voices[i], 1.0, lang, "mimic") for i in range(3)]
+    # The Twins: the same girl's voice says "left" or "right" (and two of them whisper through the door).
+    twin = "af_sky" if lang == "en-us" else "pf_dora"
+    words = ("Left!", "Right!", "This way. No, this way.") if lang == "en-us" else ("Esquerda!", "Direita!", "Por aqui. Não, por aqui.")
+    CREATURES += [(f"{prefix}twin_left", words[0], twin, 1.0, lang, "mimic"),
+                  (f"{prefix}twin_right", words[1], twin, 1.0, lang, "mimic"),
+                  (f"{prefix}hint_twins", words[2], twin, 0.9, lang, "whisper")]
     # The Echo's whispers: the name of each move.
     whisperer = "af_nicole" if lang == "en-us" else "pf_dora"
     CREATURES += [(f"{prefix}echo_say_{m}", w + ".", whisperer, 0.9, lang, "whisper")

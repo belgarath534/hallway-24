@@ -289,7 +289,7 @@ final class EncounterTests: XCTestCase {
         return e.outcome
     }
 
-    func required(_ c: Creature, seed: UInt64 = 1) -> (input: Input, from: Double, to: Double) {
+    func required(_ c: Creature, seed: UInt64 = 1) -> (input: Input, from: Double, to: Double, onBeat: Bool) {
         Encounter(creature: c, difficulty: 0.5, rng: RNG(seed: seed)).nextRequired!
     }
 
@@ -368,6 +368,64 @@ final class EncounterTests: XCTestCase {
         }
         XCTAssertEqual(e.outcome, .survived)
         XCTAssertEqual(zaps, e.rounds)
+    }
+
+    /// Plays an encounter with a perfect player (or one that does `mistake` instead of each right move).
+    func play(_ c: Creature, _ d: Double, seed: UInt64 = 1, wrong: Bool = false) -> Encounter {
+        var e = Encounter(creature: c, difficulty: d, rng: RNG(seed: seed))
+        for _ in 0..<(30 * 120) where e.outcome == nil {
+            _ = e.update(1.0 / 30)
+            if let need = e.nextRequired, e.time >= need.from + (need.onBeat ? 0 : 0.35) {
+                if wrong {
+                    _ = e.input(need.input == .left ? .right : need.input == .right ? .left : .up)
+                } else {
+                    _ = e.input(need.input)
+                }
+            }
+        }
+        return e
+    }
+
+    func testNewCreaturesCanBeBeatenAndLost() {
+        for c in [Creature.neighbor, .lullaby, .breather, .twins, .lights] {
+            for d in [0.0, 0.5, 1.0] {
+                for seed in 1...5 as ClosedRange<UInt64> {
+                    XCTAssertEqual(play(c, d, seed: seed).outcome, .survived, "\(c) at \(d), seed \(seed)")
+                    XCTAssertEqual(play(c, d, seed: seed, wrong: true).outcome, .caught("caught_\(c.rawValue)"), "\(c) at \(d)")
+                }
+            }
+        }
+    }
+
+    func testNeighborWrongCount() {
+        var e = Encounter(creature: .neighbor, difficulty: 0, rng: RNG(seed: 4))
+        var tapped = false
+        for _ in 0..<(30 * 60) where e.outcome == nil {
+            _ = e.update(1.0 / 30)
+            // One tap too many each time.
+            if let need = e.nextRequired, e.time >= need.from + 0.3, !tapped {
+                for _ in 0...e.knocks { _ = e.input(.tap) }
+                tapped = true
+            }
+            if e.nextRequired == nil { tapped = false }
+        }
+        XCTAssertEqual(e.outcome, .caught("caught_neighbor"))
+        XCTAssertEqual(e.mistakes, 2)
+    }
+
+    func testLightsOneMissIsForgiven() {
+        var e = Encounter(creature: .lights, difficulty: 0, rng: RNG(seed: 1))
+        var skipTick: Double?
+        for _ in 0..<(30 * 60) where e.outcome == nil {
+            _ = e.update(1.0 / 30)
+            if let need = e.nextRequired, e.time >= need.from {
+                if skipTick == nil { skipTick = need.from }   // miss the first tick that counts
+                if need.from == skipTick { continue }
+                _ = e.input(.tap)
+            }
+        }
+        XCTAssertEqual(e.outcome, .survived)
+        XCTAssertEqual(e.mistakes, 1)
     }
 
     func testMimicTapReplays() {

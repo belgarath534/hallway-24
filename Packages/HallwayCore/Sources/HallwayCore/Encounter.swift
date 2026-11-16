@@ -48,8 +48,23 @@ public struct Encounter: Sendable {
     var echoIndex = 0
     var listenFrom = Double.infinity
     var deadline = Double.infinity
-    /// Echo: mistakes so far (three and it shrieks).
+    /// Echo: mistakes so far (three and it shrieks). The Neighbor, the Lullaby and the Lights allow fewer.
     public private(set) var mistakes = 0
+    // The Neighbor
+    var knocks = 0
+    var taps = 0
+    var lastTap = -10.0
+    var judgeAt = Double.infinity
+    var round = 0
+    // The Lullaby: when each note comes, from the first one
+    var beats: [Double] = []
+    var pitches: [Double] = []
+    var firstTap: Double?
+    var noteIndex = 0
+    var tolerance = 0.3
+    // The Lights
+    var ticks: [Double] = []
+    var hit: [Bool] = []
 
     static let actions: [Input] = [.left, .right, .up, .down, .tap]
 
@@ -66,6 +81,11 @@ public struct Encounter: Sendable {
         case .counter: buildCounter()
         case .mimic: buildMimic()
         case .echo: startEcho()
+        case .neighbor: startNeighbor()
+        case .lullaby: startLullaby()
+        case .breather: buildBreather()
+        case .twins: buildTwins()
+        case .lights: buildLights()
         }
         schedule.sort { $0.time < $1.time }
     }
@@ -87,6 +107,9 @@ public struct Encounter: Sendable {
             if time > deadline { out += echoMistake() }
             return out
         }
+        if creature == .neighbor { return out + neighborUpdate() }
+        if creature == .lullaby { return out + lullabyUpdate() }
+        if creature == .lights { return out + lightsUpdate() }
         for i in rules.indices where !rules[i].done {
             if case .require = rules[i].kind, time > rules[i].to {
                 outcome = .caught(rules[i].reason)
@@ -105,6 +128,9 @@ public struct Encounter: Sendable {
     public mutating func input(_ input: Input) -> [GameEvent] {
         guard outcome == nil, Self.actions.contains(input) else { return [] }
         if creature == .echo { return echoInput(input) }
+        if creature == .neighbor { return neighborInput(input) }
+        if creature == .lullaby { return lullabyInput(input) }
+        if creature == .lights { return lightsInput(input) }
         if creature == .mimic, input == .tap {
             replayMimic(from: time + 0.2)
             return []
@@ -131,16 +157,29 @@ public struct Encounter: Sendable {
         return []
     }
 
-    /// For the test bot: the right move and the earliest moment it counts.
-    public var nextRequired: (input: Input, from: Double, to: Double)? {
-        if creature == .echo {
+    /// For the test bot: the right move and the earliest moment it counts. `onBeat`: tap exactly at `from`
+    /// (a rhythm the player can anticipate), instead of reacting to a sound.
+    public var nextRequired: (input: Input, from: Double, to: Double, onBeat: Bool)? {
+        switch creature {
+        case .echo:
             guard echoIndex < pattern.count, listenFrom.isFinite else { return nil }
-            return (pattern[echoIndex], listenFrom, deadline)
+            return (pattern[echoIndex], listenFrom, deadline, false)
+        case .neighbor:
+            guard listenFrom.isFinite, taps < knocks else { return nil }
+            return (.tap, max(listenFrom, lastTap + 0.35), deadline, false)
+        case .lullaby:
+            guard listenFrom.isFinite, noteIndex < beats.count else { return nil }
+            guard let t0 = firstTap else { return (.tap, listenFrom, deadline, false) }
+            return (.tap, t0 + beats[noteIndex], t0 + beats[noteIndex] + tolerance, true)
+        case .lights:
+            guard let i = ticks.indices.first(where: { $0 >= 2 && !hit[$0] && ticks[$0] + tolerance > time }) else { return nil }
+            return (.tap, ticks[i], ticks[i] + tolerance, true)
+        default:
+            for rule in rules where !rule.done {
+                if case let .require(input, _, _, _) = rule.kind { return (input, rule.from, rule.to, false) }
+            }
+            return nil
         }
-        for rule in rules where !rule.done {
-            if case let .require(input, _, _, _) = rule.kind { return (input, rule.from, rule.to) }
-        }
-        return nil
     }
 
     // MARK: The creatures
@@ -381,5 +420,242 @@ public struct Encounter: Sendable {
         playPattern(from: time + 1.3)
         return [.play(SoundCue(.echoWrong)), .haptic(.warning),
                 .caption(mistakes == 1 ? t2("Wrong. Two tries left.", "Errado. Mais duas chances.") : t2("Wrong. Last try.", "Errado. Última chance."))]
+    }
+
+    // MARK: The Neighbor
+
+    private var neighborRounds: Int { difficulty < 0.5 || guided ? 1 : 2 }
+
+    private mutating func startNeighbor() {
+        end = .infinity
+        playKnocks(from: 1.0)
+    }
+
+    private mutating func playKnocks(from start: Double) {
+        knocks = rng.int(2, 3 + Int((3 * difficulty).rounded()))
+        taps = 0
+        lastTap = -10
+        judgeAt = .infinity
+        let side = rng.side()
+        var t = start
+        at(start, .caption(t2("Knock knock…", "Toc toc…")))
+        for k in 0..<knocks {
+            at(t, .play(SoundCue(.neighborKnock, pan: side.pan * 0.8)))
+            // Late at night it knocks with an uneven rhythm, so you have to count, not feel.
+            t += k == knocks - 1 ? 0 : 0.6 - 0.15 * difficulty + (difficulty > 0.5 ? rng.range(-0.12, 0.2) : 0)
+        }
+        listenFrom = t + 0.9
+        deadline = listenFrom + 6
+        at(listenFrom, .play(SoundCue(.echoTurn)))
+        at(listenFrom, .caption(t2("How many? Tap.", "Quantas? Toque.")))
+        schedule.sort { $0.time < $1.time }
+    }
+
+    private mutating func neighborInput(_ input: Input) -> [GameEvent] {
+        guard input == .tap, time >= listenFrom - 0.1 else { return [] }
+        taps += 1
+        lastTap = time
+        judgeAt = time + 1.6
+        return [.play(SoundCue(.neighborKnock, volume: 0.5)), .haptic(.light), .caption("\(taps)")]
+    }
+
+    private mutating func neighborUpdate() -> [GameEvent] {
+        guard listenFrom.isFinite else { return [] }
+        if time >= judgeAt || (taps == 0 && time > deadline) {
+            listenFrom = .infinity
+            if taps == knocks {
+                round += 1
+                if round >= neighborRounds {
+                    outcome = .survived
+                    return [.play(SoundCue(.survive)), .caption(t2("Silence. It believes you.", "Silêncio. Ele acreditou."))]
+                }
+                playKnocks(from: time + 1.2)
+                return [.haptic(.success)]
+            }
+            mistakes += 1
+            if mistakes >= 2 {
+                outcome = .caught("caught_neighbor")
+                return []
+            }
+            playKnocks(from: time + 1.4)
+            return [.play(SoundCue(.echoWrong)), .haptic(.warning),
+                    .caption(t2("Wrong. It knocks again. Last try.", "Errado. Ele bate de novo. Última chance."))]
+        }
+        return []
+    }
+
+    // MARK: The Lullaby
+
+    private mutating func startLullaby() {
+        end = .infinity
+        let notes = 3 + Int((2 * difficulty).rounded())
+        var t = 0.0
+        beats = [0]
+        for _ in 1..<notes {
+            t += rng.pick(difficulty < 0.4 ? [0.45, 0.9] : [0.35, 0.6, 0.9])
+            beats.append(t)
+        }
+        pitches = (0..<notes).map { _ in rng.pick([0.84, 0.94, 1.0, 1.12, 1.26]) }
+        tolerance = 0.3 - 0.08 * difficulty
+        playLullaby(from: 1.0)
+    }
+
+    private mutating func playLullaby(from start: Double) {
+        firstTap = nil
+        noteIndex = 0
+        at(start, .caption(t2("Listen to the rhythm…", "Escute o ritmo…")))
+        for (b, p) in zip(beats, pitches) { at(start + b, .play(SoundCue(.lullabyNote, rate: p))) }
+        listenFrom = start + beats.last! + 1.0
+        deadline = listenFrom + 6
+        at(listenFrom, .play(SoundCue(.echoTurn)))
+        at(listenFrom, .caption(t2("Your turn. Tap the rhythm.", "Sua vez. Toque o ritmo.")))
+        schedule.sort { $0.time < $1.time }
+    }
+
+    private mutating func lullabyInput(_ input: Input) -> [GameEvent] {
+        guard input == .tap, listenFrom.isFinite, time >= listenFrom - 0.1, noteIndex < beats.count else { return [] }
+        if let t0 = firstTap {
+            let expected = t0 + beats[noteIndex]
+            guard abs(time - expected) <= tolerance else { return lullabyMistake() }
+        } else {
+            firstTap = time
+        }
+        let note: [GameEvent] = [.play(SoundCue(.lullabyNote, rate: pitches[noteIndex])), .haptic(.light)]
+        noteIndex += 1
+        if noteIndex == beats.count {
+            outcome = .survived
+            return note + [.caption(t2("It falls asleep.", "Ela adormeceu."))]
+        }
+        return note
+    }
+
+    private mutating func lullabyUpdate() -> [GameEvent] {
+        guard listenFrom.isFinite else { return [] }
+        if let t0 = firstTap, noteIndex < beats.count, time > t0 + beats[noteIndex] + tolerance { return lullabyMistake() }
+        if firstTap == nil, time > deadline { return lullabyMistake() }
+        return []
+    }
+
+    private mutating func lullabyMistake() -> [GameEvent] {
+        mistakes += 1
+        listenFrom = .infinity
+        if mistakes >= 2 {
+            outcome = .caught("caught_lullaby")
+            return []
+        }
+        playLullaby(from: time + 1.4)
+        return [.play(SoundCue(.echoWrong)), .haptic(.warning),
+                .caption(t2("Off the beat. Once more.", "Fora do ritmo. Mais uma vez."))]
+    }
+
+    // MARK: The Breather
+
+    private mutating func buildBreather() {
+        let d = difficulty
+        let rounds = 2 + (d > 0.5 ? 1 : 0)
+        let window = 1.5 - 0.5 * d
+        let circle: [Double] = [-1, -0.6, 0, 0.6, 1, 0.6, 0, -0.6]
+        var t = 0.8
+        var start = rng.int(0, circle.count - 1)
+        at(t, .caption(t2("Breathing… all around you.", "Respiração… em volta de você.")))
+        for _ in 0..<rounds {
+            let breaths = rng.int(4, 6)
+            for k in 0..<breaths {
+                t += 0.75 - 0.15 * d
+                let pan = circle[(start + k) % circle.count]
+                at(t, .play(SoundCue(.breath, pan: pan, volume: 0.3 + 0.5 * Double(k) / Double(breaths))))
+            }
+            start += breaths
+            t += 0.6
+            let side = rng.side()
+            at(t, .play(SoundCue(.breathClose, pan: side == .left ? -1 : 1)))
+            at(t, .haptic(.heavy))
+            at(t, .caption(side == .left ? t2("In your LEFT ear!", "No ouvido ESQUERDO!") : t2("In your RIGHT ear!", "No ouvido DIREITO!")))
+            let toward: Input = side == .left ? .left : .right
+            let away: Input = side == .left ? .right : .left
+            rules.append(Rule(from: t - 0.05, to: t + window,
+                              kind: .require(toward, wrong: [away], ends: false,
+                                             success: [.play(SoundCue(.shove, pan: side.pan * 0.6)), .haptic(.success)]),
+                              reason: "caught_breather"))
+            t += window + 0.4
+        }
+        end = t
+    }
+
+    // MARK: The Twins
+
+    private mutating func buildTwins() {
+        let d = difficulty
+        let rounds = 2 + (d > 0.5 ? 1 : 0)
+        let window = 2.0 - 0.6 * d
+        let gap = 0.45 - 0.25 * d
+        var t = 1.0
+        at(0.4, .caption(t2("Two voices. The first one tells the truth.", "Duas vozes. A primeira fala a verdade.")))
+        for _ in 0..<rounds {
+            t += rng.range(0.8, 1.4)
+            let realSide = rng.side(), says = rng.side()
+            let realWord: Sfx = says == .left ? .twinLeft : .twinRight
+            let lieWord: Sfx = says == .left ? .twinRight : .twinLeft
+            at(t, .play(SoundCue(realWord, pan: realSide == .left ? -1 : 1)))
+            at(t + gap, .play(SoundCue(lieWord, pan: realSide == .left ? 1 : -1)))
+            let right: Input = says == .left ? .left : .right
+            let wrong: Input = says == .left ? .right : .left
+            rules.append(Rule(from: t, to: t + gap + window,
+                              kind: .require(right, wrong: [wrong], ends: false, success: [.haptic(.light)]),
+                              reason: "caught_twins"))
+            t += gap + window
+        }
+        end = t + 0.3
+        at(end - 0.1, .play(SoundCue(.survive)))
+    }
+
+    // MARK: The Lights
+
+    private mutating func buildLights() {
+        let d = difficulty
+        let count = 6 + Int((3 * d).rounded())
+        let interval = 0.85 - 0.25 * d
+        tolerance = 0.24 - 0.06 * d
+        at(0.2, .play(SoundCue(.lightsOff)))
+        at(0.2, .caption(t2("The power goes out. Tick… tock…", "A luz acaba. Tique… taque…")))
+        ticks = (0..<count).map { 1.4 + Double($0) * interval }
+        hit = Array(repeating: false, count: count)
+        for (i, t) in ticks.enumerated() { at(t, .play(SoundCue(.tick, volume: i < 2 ? 0.7 : 1))) }
+        end = ticks.last! + tolerance + 0.2
+    }
+
+    private mutating func lightsInput(_ input: Input) -> [GameEvent] {
+        guard input == .tap, time > ticks[0] - 0.3 else { return [] }
+        if let i = ticks.indices.first(where: { $0 >= 2 && !hit[$0] && abs(time - ticks[$0]) <= tolerance }) {
+            hit[i] = true
+            return [.haptic(.light)]
+        }
+        // A tap during the first two ticks (listening) is fine; off the beat later is a mistake.
+        if time < ticks[1] + tolerance { return [] }
+        return lightsMistake()
+    }
+
+    private mutating func lightsUpdate() -> [GameEvent] {
+        var out: [GameEvent] = []
+        for i in ticks.indices where i >= 2 && !hit[i] && time > ticks[i] + tolerance {
+            hit[i] = true   // counted once, as a miss
+            out += lightsMistake()
+            if outcome != nil { return out }
+        }
+        if time >= end, outcome == nil {
+            outcome = .survived
+            out += [.play(SoundCue(.lightsOn)), .caption(t2("The lights come back on.", "As luzes voltam."))]
+        }
+        return out
+    }
+
+    private mutating func lightsMistake() -> [GameEvent] {
+        mistakes += 1
+        if mistakes >= 2 {
+            outcome = .caught("caught_lights")
+            return []
+        }
+        return [.play(SoundCue(.echoWrong, volume: 0.6)), .haptic(.warning),
+                .caption(t2("The lights flicker. One more miss…", "As luzes piscam. Mais um erro…"))]
     }
 }

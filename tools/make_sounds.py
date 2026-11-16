@@ -134,6 +134,13 @@ sfx("counter_sigh", "breath.ogg", trim=2.5)
 sfx("decoy_knock", "wood_hit_01.ogg", trim=1.0)
 sfx("decoy_creak", "wood_cracking_01.ogg", trim=1.5)
 
+# The Neighbor and the Breather
+sfx("neighbor_knock", "wood_hit_05.ogg", gain=4)
+repeat("hint_neighbor", "wood_hit_05.ogg", 3, 0.45, gain=2)
+sfx("breath", "Breath_Scared_03.mp3", trim=1.2)
+sfx("breath_close", "Breath_Scared_07.mp3", extra="aecho=0.6:0.4:20:0.3,", gain=6)
+repeat("hint_breather", "Breath_Scared_12.mp3", 2, 1.1)
+
 # Results
 mix("hit", "attack_01.ogg", "Bonecrack_00.mp3", 0.05, trim=1.5)  # made louder below
 sfx("charm_break", "glass_02.ogg", trim=1.5)

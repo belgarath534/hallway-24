@@ -648,6 +648,11 @@ extension Creature {
         case .counter: return .hintCounter
         case .mimic: return .hintEmpty
         case .echo: return .hintEcho
+        case .neighbor: return .hintNeighbor
+        case .lullaby: return .hintLullaby
+        case .breather: return .hintBreather
+        case .twins: return .hintTwins
+        case .lights: return .hintLights
         }
     }
 }

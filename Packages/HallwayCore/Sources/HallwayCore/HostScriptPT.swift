@@ -105,6 +105,26 @@ extension HostScript {
         "caught_echo": "Três erros. A caixinha de música grita, e algo escuta.",
         "echo_reward": "A caixinha de música ficou satisfeita. Ela paga bem.",
         "echo_lesson": "Primeiro, as notas. Cada uma, com o seu nome.",
+        "learn_neighbor": "O Vizinho. Ele bate na parede. Conte as batidas. Quando ouvir o sino, toque na tela o mesmo número de vezes. Nem uma a mais.",
+        "meet_neighbor": "O Vizinho. Conte as batidas.",
+        "caught_neighbor": "Número errado. O Vizinho atravessou a parede.",
+        "see_neighbor": "alguém com a orelha encostada na parede.",
+        "learn_lullaby": "A Canção de Ninar. Ela cantarola uma musiquinha. Escute o ritmo, quando cada nota vem. No sino, toque o mesmo ritmo. Só o tempo importa.",
+        "meet_lullaby": "A Canção de Ninar. Toque o ritmo dela.",
+        "caught_lullaby": "Fora do ritmo. A Canção não dormiu. Você, sim.",
+        "see_lullaby": "um bercinho, balançando sozinho.",
+        "learn_breather": "O Respirador. Ele anda em volta de você, respirando. Quando respirar bem dentro de um ouvido, deslize para esse lado. Empurre ele.",
+        "meet_breather": "O Respirador. Empurre quando ele estiver no seu ouvido.",
+        "caught_breather": "Você não empurrou. Ele te respirou.",
+        "see_breather": "o vidro embaçado. Por dentro.",
+        "learn_twins": "As Gêmeas. Duas vozes, uma em cada ouvido, dizem esquerda e direita quase juntas. Uma mente. A verdadeira sempre fala primeiro. Vá para onde ela disser.",
+        "meet_twins": "As Gêmeas. Confie na primeira voz.",
+        "caught_twins": "Você seguiu a mentirosa. A segunda voz sempre mente.",
+        "see_twins": "duas meninas de mãos dadas, muito quietas.",
+        "learn_lights": "As Luzes. A luz acaba e um relógio tiquetaqueia. Escute os dois primeiros tiques, depois toque em cada tique para manter as luzes acesas. Perca dois e elas se vão.",
+        "meet_lights": "As Luzes. Toque junto com o relógio.",
+        "caught_lights": "Você perdeu o ritmo. As luzes apagaram, e algo esperava no escuro.",
+        "see_lights": "um relógio. E nenhum interruptor.",
         "training_intro": "Vamos treinar primeiro. Este não é de verdade. Você tem três tentativas, e nada pode te machucar ainda.",
         "training_again_1": "Quase. De novo. Mais duas tentativas.",
         "training_again_2": "Mais uma vez. Último treino.",
@@ -157,6 +177,11 @@ extension HostScript {
 
     /// Lewis in Portuguese: Alex's lines suit him (polite, calm), with his own introduction and a few of his touches.
     static let lewisPT: [String: String] = [
+        "caught_neighbor": "Número errado. O Vizinho entrou sem bater. Bom, batendo.",
+        "caught_lullaby": "Fora do ritmo. Uma pena, era uma canção tão bonita.",
+        "caught_breather": "Você não o empurrou. Que falta de educação a dele.",
+        "caught_twins": "Seguiu a mentirosa. A segunda sempre mente, meu caro.",
+        "caught_lights": "Perdeu o ritmo. E no escuro, ninguém ouve um cavalheiro gritar.",
         "intro_1": "Boa noite, e boas-vindas ao Corredor vinte e quatro. Eu sou o Lewis, seu apresentador. Sim, agora em português. As regras são simples. Fique aqui por vinte e quatro horas. A cada hora, você passa por três pares de portas.",
         "intro_3": "Escolha a porta da esquerda ou a da direita. Escute de novo quando quiser. Se algo te encontrar, eu digo o que fazer. Uma vez só. Tente acompanhar, por favor.",
         "welcome_back": "Ah. Você voltou. Claro que voltou. Vamos continuar, então.",
@@ -177,6 +202,11 @@ extension HostScript {
     ]
 
     static let dora: [String: String] = [
+        "caught_neighbor": "Errou a conta! O Vizinho entrou! Oi, Vizinho!",
+        "caught_lullaby": "Fora do ritmo! Ela nem dormiu! Que pena!",
+        "caught_breather": "Não empurrou! Eca, ele respirou em você!",
+        "caught_twins": "Seguiu a mentirosa! A segunda sempre mente, bobinho!",
+        "caught_lights": "Perdeu o ritmo! Ficou escuro! Tem alguém aqui!",
         "intro_1": "Oi! Boas-vindas ao Corredor vinte e quatro! Eu sou a Dora, sua apresentadora, e estou tão feliz que você veio! Fique comigo vinte e quatro horas. A cada hora, você passa por três pares de portas!",
         "intro_4": "Você tem três corações. Se perder todos, você fica aqui comigo para sempre! Que legal! Vamos lá!",
         "welcome_back": "Você voltou! Eu sabia! Ninguém vai embora de verdade. Vamos continuar!",
@@ -253,6 +283,11 @@ extension HostScript {
     ]
 
     static let noel: [String: String] = [
+        "caught_neighbor": "Ho ho! Número errado! O Vizinho veio pela chaminé! Quer dizer, pela parede!",
+        "caught_lullaby": "Ho ho! Fora do ritmo! Nem a canção de Natal salvou!",
+        "caught_breather": "Ho ho! Não empurrou! Bafo de rena!",
+        "caught_twins": "Ho ho! Seguiu a mentirosa! Lista dos malvados!",
+        "caught_lights": "Ho ho! Apagou tudo! Nem o pisca-pisca sobrou!",
         "intro_1": "Ho ho ho! Boas-vindas, boas-vindas! Eu sou o Noel, seu apresentador! Fique vinte e quatro horas, três pares de portas por hora, e eu vou estar olhando! Sempre olhando! Ho ho!",
         "intro_4": "Três corações! Que nem três presentinhos! Vamos ver quanto tempo você guarda eles! Ho ho ho!",
         "welcome_back": "Ho ho! Você voltou! Eu sabia! Seu nome tá na minha lista!",

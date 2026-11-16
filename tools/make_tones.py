@@ -74,6 +74,63 @@ save("echo_wrong", seq([bell(311.1, 0.6) + bell(329.6, 0.6), bell(233.1, 0.9) + 
 save("echo_solved", seq([bell(C5, 0.6), bell(E5, 0.6), bell(G5, 0.6), bell(C6, 1.2)], 0.12))
 # Through the door: a little music-box tune.
 save("hint_echo", seq([bell(f, 0.8) for f in (G5, E5, C5, E5, G5, C6)], 0.28), gain_db=-6)
+# The Lullaby: a soft hummed note (the game changes its pitch), and a little tune through the door.
+def hum(freq, seconds=0.7):
+    x = t(seconds)
+    vib = 1 + 0.012 * np.sin(2 * np.pi * 5.5 * x)
+    phase = 2 * np.pi * np.cumsum(freq * vib) / SR
+    tone = np.sin(phase) + 0.25 * np.sin(2 * phase) + 0.08 * np.sin(3 * phase)
+    env = np.minimum(1, x * 12) * np.exp(-x * 2.2)
+    return tone * env
+
+
+save("lullaby_note", hum(392.0))
+save("hint_lullaby", seq([hum(f, 0.6) for f in (392.0, 329.6, 392.0, 293.7)], 0.5), gain_db=-8)
+
+
+# The Lights: a clock tick, the power going off and coming back, and a flickering hum through the door.
+def tick_sound():
+    x = t(0.09)
+    return (np.sin(2 * np.pi * 2400 * x) * 0.6 + rng.standard_normal(len(x)) * 0.4) * np.exp(-x * 70)
+
+
+def power(up, seconds=1.2):
+    x = t(seconds)
+    f = 120 * (x / seconds if up else 1 - x / seconds) + 30
+    hum_ = np.sin(2 * np.pi * np.cumsum(f) / SR) + 0.4 * np.sin(4 * np.pi * np.cumsum(f) / SR)
+    env = (x / seconds) if up else (1 - x / seconds)
+    return hum_ * env
+
+
+def flicker(seconds=2.4):
+    x = t(seconds)
+    base = np.sin(2 * np.pi * 60 * x) + 0.5 * np.sin(2 * np.pi * 120 * x) + 0.2 * np.sin(2 * np.pi * 180 * x)
+    on = (np.sin(2 * np.pi * 3.3 * x) + 0.6 * np.sin(2 * np.pi * 7.1 * x)) > -0.3
+    ticks_ = np.zeros(len(x))
+    for k in range(4):
+        c = tick_sound()
+        start = int(SR * (0.3 + k * 0.55))
+        ticks_[start:start + len(c)] += c * 0.8
+    return base * on * 0.5 + ticks_
+
+
+save("tick", tick_sound())
+save("lights_off", power(False))
+save("lights_on", power(True))
+save("hint_lights", flicker(), gain_db=-6)
+
+
+# The Breather: a shove (a quick whoosh).
+def whoosh(seconds=0.45):
+    x = t(seconds)
+    noise = rng.standard_normal(len(x))
+    # A simple moving filter: noise brightened as it peaks.
+    k = np.exp(-((x - 0.15) ** 2) / 0.008)
+    return noise * k
+
+
+save("shove", whoosh())
+
 # Static: every right swipe.
 save("zap", zap())
 print("Done.")
