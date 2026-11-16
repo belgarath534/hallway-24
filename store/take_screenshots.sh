@@ -32,8 +32,8 @@ for rt in reversed(rts):
   n=1
   for SCREEN in menu creature hosts practice howto; do
     xcrun simctl launch --terminate-running-process "$UDID" com.hallway24.Hallway24 -screenshot $SCREEN -language en
-    # The creature screen waits for the Host to explain the Drip first.
-    if [ "$SCREEN" = "creature" ]; then sleep 30; else sleep 6; fi
+    # The creature screen skips the Host's talk and holds still a few seconds into the Drip.
+    if [ "$SCREEN" = "creature" ]; then sleep 12; else sleep 6; fi
     xcrun simctl io "$UDID" screenshot "shots/$KIND/${n}_${SCREEN}.png"
     sips -g pixelWidth -g pixelHeight "shots/$KIND/${n}_${SCREEN}.png" | tail -2
     n=$((n+1))

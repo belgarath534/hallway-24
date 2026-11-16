@@ -74,6 +74,8 @@ final class GameController: ObservableObject {
         let dt = min(now.timeIntervalSince(last), 0.1)
         last = now
         guard !paused else { return }
+        // App Store screenshots: hold still a moment into the creature, so the picture shows it attacking.
+        if ScreenshotMode.isOn, let e = game.encounter, e.time > 3 { return }
         game.update(dt)
         handle(game.drainEvents())
         sync()
@@ -103,6 +105,10 @@ final class GameController: ObservableObject {
     private func handle(_ events: [GameEvent]) {
         for e in events {
             switch e {
+            case let .say(id) where ScreenshotMode.isOn:
+                // Screenshots skip the Host's talk and go straight to the creature.
+                hostText = HostScript.text(id, game.host)
+                game.hostFinished()
             case let .say(id):
                 hostText = HostScript.text(id, game.host)
                 talking = true

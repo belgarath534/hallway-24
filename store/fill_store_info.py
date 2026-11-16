@@ -264,13 +264,13 @@ def _():
     locs = call("GET", f"/appInfos/{info['id']}/appInfoLocalizations")["data"]
     done_locales = []
     for locale, folder in (("en-US", TEXT), ("pt-BR", PT)):
-        attrs = {"subtitle": text("subtitle.txt", folder), "privacyPolicyUrl": PRIVACY_URL}
+        attrs = {"name": "Hallway 24", "subtitle": text("subtitle.txt", folder), "privacyPolicyUrl": PRIVACY_URL}
         loc = next((l for l in locs if l["attributes"]["locale"] == locale), None)
         if loc:
             patch("appInfoLocalizations", loc["id"], attrs)
         else:
             call("POST", "/appInfoLocalizations", json={"data": {"type": "appInfoLocalizations",
-                 "attributes": {"locale": locale, "name": "Hallway 24", **attrs},
+                 "attributes": {"locale": locale, **attrs},
                  "relationships": {"appInfo": rel("appInfos", info["id"])}}})
         done_locales.append(locale)
     return ", ".join(done_locales)
