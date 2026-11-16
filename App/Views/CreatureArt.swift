@@ -20,6 +20,9 @@ enum CreatureArt {
         case .staticBuzz:
             return l.t("Picture: a human-shaped creature made of flickering TV static floats above the floor of a run-down hallway with peeling wallpaper. Its body is striped with glitchy colored lines, and crackling blue electricity arcs all around it.",
                        "Imagem: uma criatura em forma de gente, feita de chiado de TV piscando, flutua acima do chão de um corredor velho com o papel de parede descascando. O corpo é cheio de listras coloridas com defeito, e eletricidade azul estala em volta dela toda.")
+        case .counter:
+            return l.t("Picture: a very tall, thin, pale man in a dark suit and tie sits perfectly still on a wooden chair in an empty room. His sunken eyes stare down at his long bony fingers as he counts on them.",
+                       "Imagem: um homem muito alto, magro e pálido, de terno escuro e gravata, sentado imóvel numa cadeira de madeira em uma sala vazia. Os olhos fundos olham para os dedos longos e ossudos enquanto ele conta neles.")
         case .mimic:
             return l.t("Picture: a dark creature peeks around a half-open wooden door. Its glowing yellow eyes and huge, too-wide grin full of teeth stare out, and one clawed hand grips the edge of the door.",
                        "Imagem: uma criatura escura espia por trás de uma porta de madeira entreaberta. Olhos amarelos brilhando e um sorriso enorme, largo demais, cheio de dentes. Uma mão com garras segura a beirada da porta.")
