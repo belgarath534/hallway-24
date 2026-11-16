@@ -16,6 +16,8 @@ public enum GameEvent: Equatable, Sendable {
     case ended(won: Bool)
     /// A Game Center achievement was earned (its id, see Achievements.swift).
     case achievement(String)
+    /// The player has practiced this creature: no practice rounds for it next time (the app remembers).
+    case learned(Creature)
 }
 
 public enum Phase: String, Codable, Sendable {
@@ -106,6 +108,13 @@ public final class Game {
     /// Practice Room: which challenge, at what difficulty. Nothing counts.
     public let practice: Creature?
     private var practiceDifficulty = 0.0
+    /// Creatures the player has already practiced (in any night). The first time one shows up,
+    /// there are up to three practice rounds before the real one.
+    public private(set) var learned: Set<Creature>
+    /// The creature being practiced right now, and how many practice rounds so far.
+    public private(set) var training: Creature?
+    private var trainingTries = 0
+    public static let practiceRounds = 3
     public private(set) var phase: Phase = .busy
     public private(set) var encounter: Encounter?
     public private(set) var waitingForHost = false
@@ -118,8 +127,9 @@ public final class Game {
     private var events: [GameEvent] = []
 
     /// A new run. `tutorial`: the Host explains the rules first.
-    public init(host: Host, seed: UInt64, tutorial: Bool) {
+    public init(host: Host, seed: UInt64, tutorial: Bool, learned: Set<Creature> = []) {
         self.host = host
+        self.learned = learned
         practice = nil
         run = RunState(seed: seed)
         beats = tutorial
@@ -128,8 +138,9 @@ public final class Game {
     }
 
     /// Continues a saved run at the start of its hour.
-    public init(host: Host, resume: RunState) {
+    public init(host: Host, resume: RunState, learned: Set<Creature> = []) {
         self.host = host
+        self.learned = learned
         practice = nil
         run = resume
         beats = [.event(.music(Self.track(for: resume.hour))), .say("welcome_back"), .step(resume.atShop ? .shop : .showDoors)]
@@ -138,6 +149,7 @@ public final class Game {
     /// The Practice Room: one challenge, as many times as you like, and nothing hurts.
     public init(host: Host, practice c: Creature, difficulty: Double, seed: UInt64, welcome: Bool) {
         self.host = host
+        learned = Set(Creature.allCases)
         practice = c
         practiceDifficulty = difficulty
         run = RunState(seed: seed)
@@ -443,20 +455,70 @@ public final class Game {
         case let .creature(c):
             let first = !run.met.contains(c)
             if first { run.met.append(c) }
-            pending = Encounter(creature: c, difficulty: difficulty, rng: RNG(seed: run.rng.next()), language: language)
+            let needsPractice = practice == nil && !learned.contains(c)
             var b: [Beat] = [.event(.music(nil)), .event(.ambience(nil)), .event(.caption(c.name(language)))]
             if practice == nil {
                 b += [.event(.play(SoundCue(c == .echo ? .hintEcho : .heartbeat))), .event(.haptic(.heartbeat))]
-                if run.health == 1, run.rng.chance(0.7) { b.append(.say(variant("last_heart"))) }
-                b.append(.say(first ? "learn_\(c.rawValue)" : "meet_\(c.rawValue)"))
+                if run.health == 1, !needsPractice, run.rng.chance(0.7) { b.append(.say(variant("last_heart"))) }
+                b.append(.say(first || needsPractice ? "learn_\(c.rawValue)" : "meet_\(c.rawValue)"))
             }
-            if c == .staticBuzz, let n = pending?.rounds { b.append(.say("static_\(n)")) }
-            beats += b + [.wait(0.3), .step(.encounter(c))]
+            if needsPractice {
+                if c == .echo {
+                    // The Echo's lesson: each note once, with its name.
+                    b.append(.say("echo_lesson"))
+                    var t = 0.0
+                    for (time, e) in Encounter.lesson() {
+                        b += [.wait(time - t), .event(e)]
+                        t = time
+                    }
+                    b.append(.wait(1.2))
+                }
+                training = c
+                trainingTries = 0
+                b.append(.say("training_intro"))
+                beats += b + nextRound(c)
+            } else {
+                beats += b + nextRound(c)
+            }
         }
     }
 
     /// The encounter that starts after the Host has explained it.
     private var pending: Encounter?
+
+    /// Sets up the next encounter with this creature (a practice round while `training` is set) and starts it.
+    private func nextRound(_ c: Creature) -> [Beat] {
+        let practicing = training != nil || practice != nil
+        // Practice rounds are a little easier than the real thing at this hour.
+        let d = training != nil ? difficulty * 0.6 : difficulty
+        pending = Encounter(creature: c, difficulty: d, rng: RNG(seed: run.rng.next()), language: language, guided: practicing)
+        var b: [Beat] = []
+        if c == .staticBuzz, let n = pending?.rounds { b.append(.say("static_\(n)")) }
+        return b + [.wait(0.3), .step(.encounter(c))]
+    }
+
+    private func finishPractice(_ c: Creature, _ outcome: Encounter.Outcome) {
+        var b: [Beat] = []
+        switch outcome {
+        case .survived:
+            b += [.event(.haptic(.success)), .event(.play(SoundCue(.survive))), .say("training_good")]
+            trainingTries = Self.practiceRounds
+        case let .caught(reason):
+            trainingTries += 1
+            b += [.event(.play(SoundCue(.hit))), .event(.haptic(.warning)), .say(reason)]
+            if trainingTries < Self.practiceRounds {
+                b.append(.say(trainingTries == 1 ? "training_again_1" : "training_again_2"))
+                beats += b + nextRound(c)
+                return
+            }
+            b.append(.say("training_done"))
+        }
+        // Practice is over: the real one.
+        training = nil
+        learned.insert(c)
+        events.append(.learned(c))
+        beats += b + [.say("training_real")] + nextRound(c)
+    }
 
     private func startEncounter(_ c: Creature) {
         encounter = pending ?? Encounter(creature: c, difficulty: difficulty, rng: RNG(seed: run.rng.next()), language: language)
@@ -468,6 +530,10 @@ public final class Game {
         let creature = encounter?.creature
         encounter = nil
         phase = .busy
+        if let c = training, practice == nil {
+            finishPractice(c, outcome)
+            return
+        }
         if practice != nil {
             switch outcome {
             case .survived:

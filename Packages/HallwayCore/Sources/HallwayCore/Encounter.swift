@@ -28,6 +28,8 @@ public struct Encounter: Sendable {
     public let creature: Creature
     public let difficulty: Double
     public let language: Language
+    /// Practice rounds and the Practice Room: the Echo whispers every move, whatever the hour.
+    public let guided: Bool
     public private(set) var time: Double = 0
     public private(set) var outcome: Outcome?
     /// Static: how many buzzes are coming.
@@ -51,11 +53,12 @@ public struct Encounter: Sendable {
 
     static let actions: [Input] = [.left, .right, .up, .down, .tap]
 
-    public init(creature: Creature, difficulty: Double, rng: RNG, language: Language = .en) {
+    public init(creature: Creature, difficulty: Double, rng: RNG, language: Language = .en, guided: Bool = false) {
         self.creature = creature
         self.difficulty = min(max(difficulty, 0), 1)
         self.rng = rng
         self.language = language
+        self.guided = guided
         switch creature {
         case .drip: buildDrip()
         case .staticBuzz: buildStatic()
@@ -305,9 +308,20 @@ public struct Encounter: Sendable {
         }
     }
 
-    /// How long the pattern is in a round.
-    var echoLength: Int { 3 + Int((3 * difficulty).rounded()) + echoRound }
-    var echoRounds: Int { difficulty < 0.4 ? 1 : 2 }
+    /// How long the pattern is in a round: two moves early in the night, up to five late.
+    var echoLength: Int { min(2 + Int((3 * difficulty).rounded()) + echoRound, 6) }
+    var echoRounds: Int { difficulty < 0.4 || guided ? 1 : 2 }
+    /// The whisper naming each move: early in the night, in practice, and in the Practice Room.
+    var echoWhispers: Bool { guided || difficulty < 0.65 }
+
+    /// Every move once, with its note and its whisper: the lesson before the first practice round.
+    public static func lesson() -> [(Double, GameEvent)] {
+        [Input.left, .right, .up, .down, .tap].enumerated().flatMap { i, move -> [(Double, GameEvent)] in
+            let t = Double(i) * 1.6
+            return [(t, .play(SoundCue(Sfx.echo(move), pan: echoPan(move)))),
+                    (t + 0.45, .play(SoundCue(Sfx.echoSay(move), pan: echoPan(move) * 0.6)))]
+        }
+    }
 
     private mutating func startEcho() {
         end = .infinity
@@ -315,7 +329,7 @@ public struct Encounter: Sendable {
         playPattern(from: 0.8)
     }
 
-    private var echoGap: Double { 0.8 - 0.25 * difficulty }
+    private var echoGap: Double { echoWhispers ? 1.1 : 0.8 - 0.25 * difficulty }
 
     /// Plays the pattern, then the "your turn" chime, then listens.
     private mutating func playPattern(from start: Double) {
@@ -323,12 +337,13 @@ public struct Encounter: Sendable {
         at(start, .caption(t2("Listen…", "Escute…")))
         for (i, move) in pattern.enumerated() {
             at(start + Double(i) * echoGap, .play(SoundCue(Sfx.echo(move), pan: Self.echoPan(move))))
+            if echoWhispers { at(start + Double(i) * echoGap + 0.35, .play(SoundCue(Sfx.echoSay(move), pan: Self.echoPan(move) * 0.6))) }
         }
         let turn = start + Double(pattern.count) * echoGap + 0.2
         at(turn, .play(SoundCue(.echoTurn)))
         at(turn, .caption(t2("Your turn.", "Sua vez.")))
         listenFrom = turn
-        deadline = turn + 5
+        deadline = turn + 6
         schedule.sort { $0.time < $1.time }
     }
 
@@ -336,8 +351,9 @@ public struct Encounter: Sendable {
         guard time >= listenFrom - 0.1, echoIndex < pattern.count else { return [] }
         guard input == pattern[echoIndex] else { return echoMistake() }
         echoIndex += 1
-        var out: [GameEvent] = [.play(SoundCue(Sfx.echo(input), pan: Self.echoPan(input)))]
-        deadline = time + 4
+        var out: [GameEvent] = [.play(SoundCue(Sfx.echo(input), pan: Self.echoPan(input))), .haptic(.light),
+                                .caption(t2("\(echoIndex) of \(pattern.count)", "\(echoIndex) de \(pattern.count)"))]
+        deadline = time + 6
         if echoIndex == pattern.count {
             echoRound += 1
             if echoRound >= echoRounds {

@@ -93,8 +93,8 @@ public enum Simulator {
 
     /// Plays a run with the bot. `talk`: count the time the Host spends talking (an estimate), for run length.
     public static func play(seed: UInt64, host: Host = .lewis, bot: BotPlayer, talk: Bool = false,
-                            resume: RunState? = nil, stopAtHour: Int? = nil) -> (Result, Game) {
-        let game = resume.map { Game(host: host, resume: $0) } ?? Game(host: host, seed: seed, tutorial: true)
+                            resume: RunState? = nil, stopAtHour: Int? = nil, learned: Set<Creature> = []) -> (Result, Game) {
+        let game = resume.map { Game(host: host, resume: $0, learned: learned) } ?? Game(host: host, seed: seed, tutorial: true, learned: learned)
         var bot = bot
         let dt = 1.0 / 30
         var t = 0.0, speaking = 0.0

@@ -104,6 +104,13 @@ extension HostScript {
         "caught_mimic": "Voz errada. Aquele era o Imitador.",
         "caught_echo": "Três erros. A caixinha de música grita, e algo escuta.",
         "echo_reward": "A caixinha de música ficou satisfeita. Ela paga bem.",
+        "echo_lesson": "Primeiro, as notas. Cada uma, com o seu nome.",
+        "training_intro": "Vamos treinar primeiro. Este não é de verdade. Você tem três tentativas, e nada pode te machucar ainda.",
+        "training_again_1": "Quase. De novo. Mais duas tentativas.",
+        "training_again_2": "Mais uma vez. Último treino.",
+        "training_good": "Muito bem. Você entendeu.",
+        "training_done": "Acabou o treino. Você vai aprender na prática.",
+        "training_real": "Agora. É de verdade.",
         "last_heart_1": "Só um coração, e algo está vindo. Calma.",
         "last_heart_2": "Cuidado. Isso pode ser a última coisa que você vai ouvir.",
         // Resultados
@@ -239,6 +246,9 @@ extension HostScript {
         "caught_mimic": "Voz errada! Era o Imitador! Ele é tão bonzinho fingindo, né?",
         "caught_echo": "Três erros! A caixinha gritou! Que barulhão!",
         "last_heart_1": "Só um coração e tem alguma coisa vindo! Eu acredito em você!",
+        "training_intro": "Vamos treinar primeiro! Este não é de verdade. Você tem três tentativas, e nada pode te machucar ainda!",
+        "training_good": "Isso! Você entendeu!",
+        "training_real": "Agora é de verdade!",
         "last_heart_2": "Último coração! Não vou olhar! Tá, vou olhar sim!",
     ]
 

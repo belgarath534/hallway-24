@@ -29,6 +29,8 @@ final class GameSettings: ObservableObject {
     /// The Host has welcomed you to the Practice Room.
     @Published var practiceVisited: Bool { didSet { defaults.set(practiceVisited, forKey: "practiceVisited") } }
 
+    /// Creatures you've already practiced: no practice rounds for them in later nights.
+    @Published private(set) var learnedCreatures: Set<Creature>
     /// Game Center achievements earned on this phone (sent again after signing in).
     @Published private(set) var achievements: Set<String>
     /// Creatures and puzzles survived over every night (a leaderboard).
@@ -55,6 +57,7 @@ final class GameSettings: ObservableObject {
         tutorial = defaults.object(forKey: "tutorial") as? Bool ?? true
         practiceVisited = defaults.bool(forKey: "practiceVisited")
         achievements = Set(defaults.stringArray(forKey: "achievements") ?? [])
+        learnedCreatures = Set((defaults.stringArray(forKey: "learnedCreatures") ?? []).compactMap(Creature.init(rawValue:)))
         creaturesSurvived = defaults.integer(forKey: "creaturesSurvived")
         bestHour = defaults.integer(forKey: "bestHour")
         nightsSurvived = defaults.integer(forKey: "nightsSurvived")
@@ -71,11 +74,24 @@ final class GameSettings: ObservableObject {
             languageChosen = true
             hostChosen = true
             savedRun = nil
+            learnedCreatures = Set(Creature.allCases)
         }
         let sound = SoundBoard.shared
         sound.musicVolume = musicVolume
         sound.ambienceVolume = ambienceVolume
         sound.effectsVolume = effectsVolume
+    }
+
+    func learn(_ c: Creature) {
+        guard !ScreenshotMode.isOn, !learnedCreatures.contains(c) else { return }
+        learnedCreatures.insert(c)
+        defaults.set(learnedCreatures.map(\.rawValue), forKey: "learnedCreatures")
+    }
+
+    /// Forget which creatures were practiced, so every one gets its practice rounds again.
+    func resetPractice() {
+        learnedCreatures = []
+        defaults.removeObject(forKey: "learnedCreatures")
     }
 
     /// Keeps a newly earned achievement and sends it to Game Center.

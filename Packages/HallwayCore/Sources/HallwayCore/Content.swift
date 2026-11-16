@@ -117,8 +117,8 @@ public enum Creature: String, Codable, CaseIterable, Sendable {
             return l.t("It hides behind doors pretending to be a good room, but its sound is a little too low. Inside, it plays a voice on both sides. One is real and one is the Mimic, lower. Swipe toward the real one. Tap to hear them again.",
                        "Ele se esconde atrás das portas fingindo ser um quarto bom, mas o som dele é um pouco grave demais. Lá dentro, uma voz toca dos dois lados. Uma é real e a outra é o Imitador, mais grave. Deslize para o lado da voz real. Toque para ouvir de novo.")
         case .echo:
-            return l.t("A music box. It plays a pattern of sounds: left, right, up, down or a knock in the middle. Then it chimes: your turn. Play the pattern back with swipes and a tap. Three mistakes and it shrieks. Solve it for lots of tokens.",
-                       "Uma caixinha de música. Ela toca uma sequência de sons: esquerda, direita, cima, baixo ou uma batida no meio. Depois toca um sino: sua vez. Repita a sequência com deslizes e um toque. Três erros e ela grita. Resolva e ganhe muitas fichas.")
+            return l.t("A music box. It plays a short pattern of notes, and a whisper names each one: left, right, up, down, or knock. Then it chimes: your turn. Play the pattern back: swipe left, right, up or down, and tap for the knock. You have six seconds for each move, and three mistakes before it shrieks. Late at night the whispers stop and only the notes play. Solve it for lots of tokens.",
+                       "Uma caixinha de música. Ela toca uma sequência curta de notas, e um sussurro diz o nome de cada uma: esquerda, direita, cima, baixo ou batida. Depois toca um sino: sua vez. Repita a sequência: deslize para esquerda, direita, cima ou baixo, e toque para a batida. Você tem seis segundos para cada movimento e três erros antes de ela gritar. Tarde da noite os sussurros param e só as notas tocam. Resolva e ganhe muitas fichas.")
         }
     }
 }
@@ -223,6 +223,9 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
     // The Echo
     case echoLeft = "echo_left", echoRight = "echo_right", echoUp = "echo_up", echoDown = "echo_down", echoTap = "echo_tap"
     case echoTurn = "echo_turn", echoWrong = "echo_wrong", echoSolved = "echo_solved"
+    /// A whisper naming each Echo move ("left", "up", "knock"…), so you don't have to learn the notes first.
+    case echoSayLeft = "echo_say_left", echoSayRight = "echo_say_right", echoSayUp = "echo_say_up"
+    case echoSayDown = "echo_say_down", echoSayTap = "echo_say_tap"
     // Results
     case hit = "hit", charmBreak = "charm_break", survive = "survive", heartbeat = "heartbeat"
     case loseSting = "lose_sting", winSting = "win_sting"
@@ -232,7 +235,7 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
     }
 
     /// Spoken sounds have one recording per language.
-    public var spoken: Bool { rawValue.hasPrefix("count") || rawValue.hasPrefix("mimic_voice") }
+    public var spoken: Bool { rawValue.hasPrefix("count") || rawValue.hasPrefix("mimic_voice") || rawValue.hasPrefix("echo_say") }
 
     /// The sound the Echo makes for a move.
     public static func echo(_ input: Input) -> Sfx {
@@ -242,6 +245,17 @@ public enum Sfx: String, Codable, CaseIterable, Sendable {
         case .up: return .echoUp
         case .down: return .echoDown
         default: return .echoTap
+        }
+    }
+
+    /// The whisper that names an Echo move.
+    public static func echoSay(_ input: Input) -> Sfx {
+        switch input {
+        case .left: return .echoSayLeft
+        case .right: return .echoSayRight
+        case .up: return .echoSayUp
+        case .down: return .echoSayDown
+        default: return .echoSayTap
         }
     }
 }

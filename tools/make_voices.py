@@ -28,6 +28,8 @@ WORDS = {"en": ["one", "two", "three", "four", "five", "six", "seven", "eight", 
 # The Counter: a slow, low whisper close to your ear. The Mimic: three friendly-sounding voices.
 # Each in English (sfx_<name>) and Portuguese (sfx_pt_<name>).
 CREATURES = []
+ECHO_WORDS = {"en": ["left", "right", "up", "down", "knock"], "pt": ["esquerda", "direita", "cima", "baixo", "batida"]}
+ECHO_MOVES = ["left", "right", "up", "down", "tap"]
 for lang, prefix, counter, voices, phrases in [
     ("en-us", "sfx_", "am_onyx", ["af_nicole", "am_echo", "af_sky"], ["Over here!", "Hello? Is someone there?", "Help me. Please."]),
     ("pt-br", "sfx_pt_", "pm_alex", ["pf_dora", "pm_santa", "pf_dora"], ["Aqui!", "Oi? Tem alguém aí?", "Me ajuda. Por favor."]),
@@ -35,6 +37,10 @@ for lang, prefix, counter, voices, phrases in [
     words = WORDS["en" if lang == "en-us" else "pt"]
     CREATURES += [(f"{prefix}count{n}", words[n - 1] + ".", counter, 0.8, lang, "counter") for n in range(1, 11)]
     CREATURES += [(f"{prefix}mimic_voice{i + 1}", phrases[i], voices[i], 1.0, lang, "mimic") for i in range(3)]
+    # The Echo's whispers: the name of each move.
+    whisperer = "af_nicole" if lang == "en-us" else "pf_dora"
+    CREATURES += [(f"{prefix}echo_say_{m}", w + ".", whisperer, 0.9, lang, "whisper")
+                  for m, w in zip(ECHO_MOVES, ECHO_WORDS["en" if lang == "en-us" else "pt"])]
 
 TRIM = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
         "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
@@ -43,6 +49,8 @@ FX = {
     # Lower, breathy and echoing.
     "counter": "asetrate=24000*0.82,aresample=24000,highpass=f=120,aecho=0.8:0.6:60|140:0.35|0.2,",
     "mimic": "",
+    # Soft and close, a little echo, quieter than the music box.
+    "whisper": "highpass=f=200,aecho=0.8:0.5:40:0.25,volume=0.8,",
 }
 
 kokoro = Kokoro(os.path.join(MODELS, "kokoro-v1.0.onnx"), os.path.join(MODELS, "voices-v1.0.bin"))

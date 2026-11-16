@@ -31,9 +31,10 @@ final class GameController: ObservableObject {
             game = Game(host: settings.host, practice: practice.creature, difficulty: practice.difficulty,
                         seed: UInt64.random(in: 1...UInt64.max), welcome: !settings.practiceVisited)
         } else if let resume {
-            game = Game(host: settings.host, resume: resume)
+            game = Game(host: settings.host, resume: resume, learned: settings.learnedCreatures)
         } else {
-            game = Game(host: settings.host, seed: UInt64.random(in: 1...UInt64.max), tutorial: settings.tutorial)
+            game = Game(host: settings.host, seed: UInt64.random(in: 1...UInt64.max), tutorial: settings.tutorial,
+                        learned: settings.learnedCreatures)
         }
         run = game.run
         sound.language = settings.language
@@ -135,6 +136,8 @@ final class GameController: ObservableObject {
                 ended = won
             case let .achievement(id):
                 settings.earn(id)
+            case let .learned(c):
+                settings.learn(c)
             }
         }
     }

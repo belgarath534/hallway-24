@@ -80,8 +80,11 @@ struct SettingsView: View {
             }
             Section {
                 Toggle(t("Host explains the rules", "Apresentador explica as regras"), isOn: $settings.tutorial)
+                Button(t("Practice every creature again", "Treinar todas as criaturas de novo")) { settings.resetPractice() }
+                    .disabled(settings.learnedCreatures.isEmpty)
             } footer: {
-                Text(t("At the start of a new night.", "No começo de uma noite nova."))
+                Text(t("The rules are explained at the start of a new night. The first time you meet each creature, you get three practice rounds; this brings them back.",
+                       "As regras são explicadas no começo de uma noite nova. Na primeira vez que você encontra cada criatura, ganha três rodadas de treino; isto as traz de volta."))
             }
         }
         .navigationTitle(t("Settings", "Ajustes"))

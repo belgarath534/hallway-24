@@ -103,6 +103,41 @@ final class GameTests: XCTestCase {
         XCTAssertLessThanOrEqual(Achievement.all.map(\.points).reduce(0, +), 1000)
     }
 
+    /// The first time a creature shows up: up to three practice rounds that can't hurt, then the real one.
+    func testPracticeRoundsBeforeANewCreature() {
+        var state = RunState(seed: 21)
+        state.doors = [Door(room: .creature(.counter), hint: .hintCounter), Door(room: .creature(.counter), hint: .hintCounter)]
+        let game = Game(host: .lewis, resume: state)
+        var said: [String] = [], learned: [Creature] = []
+        var touched = false
+        for _ in 0..<(30 * 200) {
+            if game.waitingForHost { game.hostFinished() }
+            if game.phase == .hallway, game.run.doors.count == 2 { game.input(.left) }
+            // Touch during every practice round (the Counter catches that), then keep still for the real one.
+            if game.phase == .encounter, game.training != nil, let e = game.encounter, e.time > 2, !touched {
+                game.input(.tap); touched = true
+            }
+            if game.phase != .encounter { touched = false }
+            game.update(1.0 / 30)
+            for e in game.drainEvents() {
+                if case let .say(id) = e { said.append(id) }
+                if case let .learned(c) = e { learned.append(c) }
+            }
+            if said.contains("training_real") && game.phase == .hallway { break }
+        }
+        XCTAssertEqual(said.filter { $0 == "caught_counter" }.count, 3)
+        XCTAssertTrue(said.contains("training_intro"))
+        XCTAssertTrue(said.contains("training_done"))
+        XCTAssertEqual(learned, [.counter])
+        XCTAssertEqual(game.run.health, Game.maxHealth, "practice rounds never cost a heart")
+        XCTAssertTrue(game.learned.contains(.counter))
+    }
+
+    func testLearnedCreaturesSkipPractice() {
+        let r = Simulator.play(seed: 3, bot: perfect, learned: Set(Creature.allCases)).0
+        XCTAssertFalse(r.lines.contains("training_intro"))
+    }
+
     func testLineIdsAreUnique() {
         XCTAssertEqual(Set(HostScript.lines.map(\.id)).count, HostScript.lines.count)
     }
