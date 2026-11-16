@@ -11,6 +11,10 @@ struct HallwayApp: App {
                 .environmentObject(settings)
                 .preferredColorScheme(.dark)
                 .tint(Color(red: 0.95, green: 0.78, blue: 0.45))
+                .onAppear {
+                    GameCenter.shared.onAuthenticated = { settings.syncGameCenter() }
+                    GameCenter.shared.authenticate()
+                }
         }
     }
 }
@@ -20,7 +24,9 @@ struct RootView: View {
     @EnvironmentObject var settings: GameSettings
 
     var body: some View {
-        if !settings.languageChosen {
+        if let screen = ScreenshotMode.screen {
+            ScreenshotRoot(screen: screen)
+        } else if !settings.languageChosen {
             LanguagePickerView(firstTime: true)
         } else if settings.hostChosen {
             MenuView()
@@ -63,5 +69,26 @@ struct LanguagePickerView: View {
         .navigationTitle(firstTime ? "Hallway 24" : settings.t("Language", "Idioma"))
         .scrollContentBackground(.hidden)
         .background(HallwayBackground())
+    }
+}
+
+/// App Store screenshots: one screen, opened directly (see ScreenshotMode).
+struct ScreenshotRoot: View {
+    @EnvironmentObject var settings: GameSettings
+    let screen: String
+
+    var body: some View {
+        switch screen {
+        case "creature":
+            GameScreen(settings: settings, resume: nil, practice: (.drip, 0.1)) {}
+        case "hosts":
+            NavigationStack { HostPickerView(firstTime: false) }
+        case "practice":
+            NavigationStack { PracticeView() }
+        case "howto":
+            NavigationStack { HowToPlayView() }
+        default:
+            MenuView()
+        }
     }
 }

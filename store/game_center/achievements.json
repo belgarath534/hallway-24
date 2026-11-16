@@ -1,0 +1,130 @@
+[
+ {
+  "id": "first_door",
+  "title": "The First Door",
+  "title_pt": "A Primeira Porta",
+  "detail": "Open your first door.",
+  "detail_pt": "Abra sua primeira porta.",
+  "points": 5
+ },
+ {
+  "id": "survive_drip",
+  "title": "Hid in Time",
+  "title_pt": "Escondido a Tempo",
+  "detail": "Survive the Drip.",
+  "detail_pt": "Sobreviva à Goteira.",
+  "points": 15
+ },
+ {
+  "id": "survive_static",
+  "title": "Grounded",
+  "title_pt": "Aterrado",
+  "detail": "Survive Static.",
+  "detail_pt": "Sobreviva à Estática.",
+  "points": 15
+ },
+ {
+  "id": "survive_crawler",
+  "title": "Run or Freeze",
+  "title_pt": "Corre ou Congela",
+  "detail": "Survive the Crawler.",
+  "detail_pt": "Sobreviva ao Rastejante.",
+  "points": 15
+ },
+ {
+  "id": "survive_counter",
+  "title": "Statue",
+  "title_pt": "Estátua",
+  "detail": "Survive the Counter.",
+  "detail_pt": "Sobreviva ao Contador.",
+  "points": 20
+ },
+ {
+  "id": "survive_mimic",
+  "title": "Not Fooled",
+  "title_pt": "Não Me Engana",
+  "detail": "Find the real voice and survive the Mimic.",
+  "detail_pt": "Ache a voz real e sobreviva ao Imitador.",
+  "points": 20
+ },
+ {
+  "id": "solve_echo",
+  "title": "Music Box",
+  "title_pt": "Caixinha de Música",
+  "detail": "Solve the Echo's puzzle.",
+  "detail_pt": "Resolva o enigma do Eco.",
+  "points": 20
+ },
+ {
+  "id": "lighter",
+  "title": "Peeking",
+  "title_pt": "Espiando",
+  "detail": "Use the lighter to look under the doors.",
+  "detail_pt": "Use o isqueiro para espiar embaixo das portas.",
+  "points": 10
+ },
+ {
+  "id": "shopper",
+  "title": "Good Customer",
+  "title_pt": "Bom Cliente",
+  "detail": "Buy something in the Host's shop.",
+  "detail_pt": "Compre algo na loja do apresentador.",
+  "points": 10
+ },
+ {
+  "id": "second_chance",
+  "title": "Not Yet",
+  "title_pt": "Ainda Não",
+  "detail": "Get saved by a Second Chance.",
+  "detail_pt": "Seja salvo por uma Segunda Chance.",
+  "points": 20
+ },
+ {
+  "id": "practice",
+  "title": "Rehearsal",
+  "title_pt": "Ensaio",
+  "detail": "Survive a challenge in the Practice Room.",
+  "detail_pt": "Vença um desafio na Sala de Treino.",
+  "points": 10
+ },
+ {
+  "id": "hour_12",
+  "title": "Halfway",
+  "title_pt": "Metade do Caminho",
+  "detail": "Reach hour twelve.",
+  "detail_pt": "Chegue à hora doze.",
+  "points": 30
+ },
+ {
+  "id": "first_night",
+  "title": "Dawn",
+  "title_pt": "Amanhecer",
+  "detail": "Survive the whole night.",
+  "detail_pt": "Sobreviva à noite inteira.",
+  "points": 100
+ },
+ {
+  "id": "last_heart",
+  "title": "By a Thread",
+  "title_pt": "Por um Fio",
+  "detail": "Survive the night with one heart left.",
+  "detail_pt": "Sobreviva à noite com um coração só.",
+  "points": 50
+ },
+ {
+  "id": "untouchable",
+  "title": "Untouchable",
+  "title_pt": "Intocável",
+  "detail": "Survive the night without getting caught once.",
+  "detail_pt": "Sobreviva à noite sem ser pego nenhuma vez.",
+  "points": 100
+ },
+ {
+  "id": "nights_5",
+  "title": "Regular Guest",
+  "title_pt": "Hóspede Fiel",
+  "detail": "Survive five nights.",
+  "detail_pt": "Sobreviva a cinco noites.",
+  "points": 100
+ }
+]

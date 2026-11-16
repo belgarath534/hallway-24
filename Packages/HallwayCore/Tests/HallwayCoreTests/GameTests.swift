@@ -74,6 +74,35 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(unused, [], "lines never used")
     }
 
+    /// Every achievement the game can send is a real one, and a winning night earns the main ones.
+    func testAchievements() {
+        var earned = Set<String>()
+        for seed in 1...60 as ClosedRange<UInt64> {
+            let game = Game(host: .lewis, seed: seed, tutorial: false)
+            var bot = BotPlayer(skill: 1, ear: 1, reaction: 0.35, seed: seed)
+            for _ in 0..<(30 * 60 * 90) {
+                if game.waitingForHost { game.hostFinished() }
+                if let i = bot.act(game) { game.input(i) }
+                game.update(1.0 / 30)
+                var done = false
+                for e in game.drainEvents() {
+                    if case let .achievement(id) = e {
+                        XCTAssertNotNil(Achievement.named(id), "unknown achievement \(id)")
+                        earned.insert(id)
+                    }
+                    if case .ended = e { done = true }
+                }
+                if done { break }
+            }
+        }
+        for id in ["first_door", "survive_drip", "survive_static", "survive_crawler", "survive_counter", "survive_mimic",
+                   "hour_12", "first_night", "untouchable", "shopper"] {
+            XCTAssertTrue(earned.contains(id), "never earned \(id)")
+        }
+        XCTAssertEqual(Set(Achievement.all.map(\.id)).count, Achievement.all.count)
+        XCTAssertLessThanOrEqual(Achievement.all.map(\.points).reduce(0, +), 1000)
+    }
+
     func testLineIdsAreUnique() {
         XCTAssertEqual(Set(HostScript.lines.map(\.id)).count, HostScript.lines.count)
     }

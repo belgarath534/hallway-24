@@ -3,6 +3,7 @@ import SwiftUI
 
 struct MenuView: View {
     @EnvironmentObject var settings: GameSettings
+    @ObservedObject private var gameCenter = GameCenter.shared
     @State private var playing: PlayRequest?
 
     struct PlayRequest: Identifiable {
@@ -68,6 +69,13 @@ struct MenuView: View {
                         Label(t("Language: English", "Idioma: Português"), systemImage: "globe")
                     }
                     NavigationLink { CreditsView() } label: { Label(t("Credits", "Créditos"), systemImage: "music.note") }
+                    if gameCenter.isAuthenticated {
+                        Button {
+                            gameCenter.showDashboard()
+                        } label: {
+                            Label(t("Game Center: achievements and leaderboards", "Game Center: conquistas e placares"), systemImage: "trophy")
+                        }
+                    }
                 }
 
                 if settings.nightsPlayed > 0 {

@@ -1,0 +1,5 @@
+Hallway 24 is an audio game designed for blind and visually impaired players, playable with VoiceOver. Please use headphones: every door plays a sound on the left or right.
+
+How to play: choose a Host, then Start the Night. In the hallway, tap Left door or Right door. When a creature appears, the full screen becomes a direct-touch play area (swipe left, right, up or down, or tap). The Practice Room in the main menu lets you try each creature without losing.
+
+No login, no in-app purchases, no ads, no data collection. Voices are generated with Kokoro and Chatterbox (open-source text-to-speech, Apache 2.0 and MIT licenses). Music by Kevin MacLeod under CC BY 4.0; sound effects are CC0 and CC BY 3.0, credited in the game (Credits screen).

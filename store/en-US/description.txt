@@ -1,0 +1,28 @@
+Stay in the hallway for twenty four hours. Every hour, three pairs of doors. Left or right. Choose by ear.
+
+Hallway 24 is an audio horror game made for blind and sighted players alike. Everything happens in sound: put on headphones, listen to what's behind each door, and decide. Bells, keys and dishes are good rooms. Dripping, buzzing, scratching and ticking are not.
+
+When something finds you, the whole screen becomes the play area and you survive by listening:
+• The Drip: wait for the splash, then hide in the locker. Not before.
+• Static: a buzz in one ear. Swipe the other way.
+• The Crawler: if it growls, run. If it sniffs, freeze.
+• The Counter: it counts down from ten. Don't touch anything.
+• The Mimic: it pretends to be a good room. Find the real voice.
+• The Echo: a music box puzzle. Play its pattern back.
+
+You have three hearts. Find bedrooms, kitchens and vaults, collect items, and spend your tokens in the Host's shop: a lighter to peek under the doors, bandages, earplugs, a lucky coin, a skeleton key, a lucky charm and a second chance.
+
+Choose your Host from eleven personalities: Lewis, the far too calm gentleman. Heart, who is so proud of you. George the old caretaker, Emma the strict night nurse, Rex the bored security guard, Nicole the ghost who used to be a guest, Santa, who is far too jolly about your suffering, and in Portuguese, Alex, Dora, Noel and Lewis himself. Every Host has their own voice, their own jokes and their own way of reacting when something catches you.
+
+Made for accessibility from the very first line:
+• Fully playable with VoiceOver. During creatures, your touches go straight to the game.
+• 3D sound and vibration tell you everything you need.
+• Captions of the Host and of every sound, for deaf and hard of hearing players.
+• Separate volume for music, background sounds and effects.
+• A Practice Room to learn every creature without losing hearts.
+• English and Brazilian Portuguese.
+• Pictures of every creature, each with a description.
+
+Game Center achievements and leaderboards. No ads, no accounts, no data collected.
+
+Music by Kevin MacLeod (incompetech.com), CC BY 4.0. Full credits in the game.

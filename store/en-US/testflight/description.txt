@@ -1,0 +1,1 @@
+An audio horror game for VoiceOver and headphones. Stay in the hallway for 24 hours, choose doors by ear, and survive the creatures by listening.

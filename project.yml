@@ -17,6 +17,10 @@ targets:
           - "**/*.md"
     dependencies:
       - package: HallwayCore
+    entitlements:
+      path: App/Hallway24.entitlements
+      properties:
+        com.apple.developer.game-center: true
     info:
       path: App/Info.plist
       properties:

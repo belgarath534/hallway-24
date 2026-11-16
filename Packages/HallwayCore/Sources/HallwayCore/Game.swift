@@ -14,6 +14,8 @@ public enum GameEvent: Equatable, Sendable {
     case save
     /// The run is over. Show the results.
     case ended(won: Bool)
+    /// A Game Center achievement was earned (its id, see Achievements.swift).
+    case achievement(String)
 }
 
 public enum Phase: String, Codable, Sendable {
@@ -286,6 +288,7 @@ public final class Game {
         let h = run.hour
         var b: [Beat] = [.event(.music(Self.track(for: h))), .event(.ambience(h >= 17 ? .deep : .hallway))]
         if run.step == 1 { b.append(.say("hour_\(h)")) }
+        if h >= 12 { events.append(.achievement("hour_12")) }
         if h >= 16, run.rng.chance(0.12) {
             b.append(.say(variant("late")))
         } else if h >= 2, run.rng.chance(0.1) {
@@ -321,6 +324,7 @@ public final class Game {
         switch item {
         case .lighter:
             take(.lighter)
+            events.append(.achievement("lighter"))
             beats = [.say("lighter_left"), .say("see_\(run.doors[0].room.key)"), .say("lighter_right"), .say("see_\(run.doors[1].room.key)")]
         case .bandage:
             guard run.health < Self.maxHealth else {
@@ -364,6 +368,7 @@ public final class Game {
         let door = run.doors[side == .left ? 0 : 1]
         run.doors = []
         phase = .busy
+        events.append(.achievement("first_door"))
         var b: [Beat] = []
         if run.rng.chance(0.35) { b.append(.say(variant("open"))) }
         b += [.event(.play(SoundCue(.doorOpen, pan: side.pan * 0.6))), .event(.haptic(.light)), .wait(1.0), .step(.enter(door.room))]
@@ -466,6 +471,7 @@ public final class Game {
         if practice != nil {
             switch outcome {
             case .survived:
+                events.append(.achievement("practice"))
                 beats += [.event(.haptic(.success)), .event(.play(SoundCue(.survive))), .say(variant("survived")), .step(.practiceOver)]
             case let .caught(reason):
                 beats += [.event(.play(SoundCue(.hit))), .event(.haptic(.heavy)), .say(reason), .step(.practiceOver)]
@@ -475,6 +481,7 @@ public final class Game {
         switch outcome {
         case .survived:
             run.stats.survived += 1
+            if let creature { events.append(.achievement(creature == .echo ? "solve_echo" : "survive_\(creature.rawValue)")) }
             if creature == .echo {
                 let n = earn(4 + Int((2 * difficulty).rounded()))
                 beats += [.event(.haptic(.success)), .event(.play(SoundCue(.coins))), .say("echo_reward"), .say(tokenLine(n)),
@@ -494,6 +501,7 @@ public final class Game {
                 if run.health <= 0, run.count(.secondChance) > 0 {
                     take(.secondChance)
                     run.health = 1
+                    events.append(.achievement("second_chance"))
                     b += [.event(.play(SoundCue(.heal))), .event(.haptic(.success)), .say("second_chance_saved"), .step(.finishRoom)]
                 } else if run.health <= 0 {
                     b += [.step(.lose)]
@@ -538,6 +546,7 @@ public final class Game {
         }
         run.tokens -= item.price
         run.items[item.rawValue, default: 0] += 1
+        events.append(.achievement("shopper"))
         beats = [.event(.play(SoundCue(.coins))), .say(variant("shop_buy"))]
     }
 
@@ -552,6 +561,11 @@ public final class Game {
 
     private func end(won: Bool) {
         phase = won ? .won : .lost
+        if won {
+            events.append(.achievement("first_night"))
+            if run.health == 1 { events.append(.achievement("last_heart")) }
+            if run.stats.hits == 0 { events.append(.achievement("untouchable")) }
+        }
         beats += [.event(.music(won ? .win : .lose)), .event(.ambience(nil)),
                   .event(.play(SoundCue(won ? .winSting : .loseSting))), .wait(1.0),
                   .say(variant(won ? "win" : "lose")), .event(.ended(won: won))]

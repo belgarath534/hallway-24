@@ -125,8 +125,10 @@ final class GameController: ObservableObject {
             case .save:
                 if game.practice == nil { settings.save(game.run) }
             case let .ended(won):
-                settings.record(won: won, hour: game.run.hour)
+                settings.record(won: won, hour: game.run.hour, survived: game.run.stats.survived)
                 ended = won
+            case let .achievement(id):
+                settings.earn(id)
             }
         }
     }

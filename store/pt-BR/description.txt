@@ -1,0 +1,28 @@
+Fique no corredor por vinte e quatro horas. A cada hora, três pares de portas. Esquerda ou direita. Escolha pelo som.
+
+Hallway 24 é um jogo de terror em áudio feito para jogadores cegos e videntes. Tudo acontece no som: coloque fones de ouvido, escute o que tem atrás de cada porta e decida. Sinos, chaves e pratos são quartos bons. Gotas, zumbidos, arranhões e tique-taque… não são.
+
+Quando algo te encontra, a tela inteira vira a área de jogo e você sobrevive escutando:
+• A Goteira: espere o splash e se esconda no armário. Não antes.
+• Estática: um zumbido em um ouvido. Deslize para o outro lado.
+• O Rastejante: se ele rosnar, corra. Se farejar, congele.
+• O Contador: ele conta de dez até um. Não toque em nada.
+• O Imitador: ele finge ser um quarto bom. Ache a voz real.
+• O Eco: um enigma de caixinha de música. Repita a sequência.
+
+Você tem três corações. Ache quartos, cozinhas e cofres, junte itens e gaste suas fichas na loja do apresentador: um isqueiro para espiar embaixo das portas, curativos, protetores de ouvido, uma moeda da sorte, uma chave mestra, um amuleto e uma segunda chance.
+
+Escolha entre onze apresentadores. Em português: Alex, o educado; Dora, que tem tanto orgulho de você; Noel, alegre demais com o seu sofrimento; e o próprio Lewis, o cavalheiro britânico, agora em português. Em inglês, mais sete. Cada um tem sua voz, suas piadas e seu jeito de reagir quando algo te pega.
+
+Feito para acessibilidade desde a primeira linha:
+• Totalmente jogável com VoiceOver. Durante as criaturas, seus toques vão direto para o jogo.
+• Som 3D e vibração dizem tudo o que você precisa.
+• Legendas do apresentador e de cada som, para jogadores surdos.
+• Volume separado para música, sons de fundo e efeitos.
+• Sala de Treino para aprender cada criatura sem perder corações.
+• Português do Brasil e inglês.
+• Imagens de todas as criaturas, cada uma com descrição.
+
+Conquistas e placares no Game Center. Sem anúncios, sem conta, nenhum dado coletado.
+
+Música de Kevin MacLeod (incompetech.com), CC BY 4.0. Créditos completos no jogo.
