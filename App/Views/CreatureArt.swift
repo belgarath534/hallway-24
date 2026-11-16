@@ -17,6 +17,9 @@ enum CreatureArt {
         case .echo:
             return l.t("Picture: an old wooden music box with its lid open, sitting on a velvet cloth on a small table in a dark room. Inside, brass gears and a metal cylinder with tiny pins. A little crank sticks out of its side, and a warm light glows on the wall behind it.",
                        "Imagem: uma caixinha de música antiga de madeira, com a tampa aberta, sobre um pano de veludo em uma mesinha em um quarto escuro. Dentro, engrenagens de latão e um cilindro de metal com pininhos. Uma manivela sai do lado, e uma luz quente brilha na parede atrás.")
+        case .staticBuzz:
+            return l.t("Picture: a human-shaped creature made of flickering TV static floats above the floor of a run-down hallway with peeling wallpaper. Its body is striped with glitchy colored lines, and crackling blue electricity arcs all around it.",
+                       "Imagem: uma criatura em forma de gente, feita de chiado de TV piscando, flutua acima do chão de um corredor velho com o papel de parede descascando. O corpo é cheio de listras coloridas com defeito, e eletricidade azul estala em volta dela toda.")
         case .mimic:
             return l.t("Picture: a dark creature peeks around a half-open wooden door. Its glowing yellow eyes and huge, too-wide grin full of teeth stare out, and one clawed hand grips the edge of the door.",
                        "Imagem: uma criatura escura espia por trás de uma porta de madeira entreaberta. Olhos amarelos brilhando e um sorriso enorme, largo demais, cheio de dentes. Uma mão com garras segura a beirada da porta.")
