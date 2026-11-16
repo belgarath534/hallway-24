@@ -7,3 +7,4 @@ Packages/*/.build/
 __pycache__/
 tools/.venv/
 tools/models/
+tools/_raw.wav
