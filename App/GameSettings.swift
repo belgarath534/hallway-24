@@ -41,9 +41,7 @@ final class GameSettings: ObservableObject {
         languageChosen = defaults.bool(forKey: "languageChosen")
         let saved = Host(rawValue: defaults.string(forKey: "host") ?? "")
         host = saved?.language == lang ? saved! : Host.all(lang)[0]
-        // Players from the first version already chose their Host (in English).
         hostChosen = defaults.bool(forKey: "hostChosen")
-        if hostChosen && !languageChosen { languageChosen = true }
         haptics = defaults.object(forKey: "haptics") as? Bool ?? true
         captions = defaults.object(forKey: "captions") as? Bool ?? true
         recordedHost = defaults.object(forKey: "recordedHost") as? Bool ?? true
@@ -58,6 +56,8 @@ final class GameSettings: ObservableObject {
         if let data = defaults.data(forKey: "savedRun") {
             savedRun = try? JSONDecoder().decode(RunState.self, from: data)
         }
+        // Players from the first version already chose their Host (in English).
+        if hostChosen && !languageChosen { languageChosen = true }
         let sound = SoundBoard.shared
         sound.musicVolume = musicVolume
         sound.ambienceVolume = ambienceVolume
