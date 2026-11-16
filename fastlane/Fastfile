@@ -34,13 +34,25 @@ platform :ios do
                      "(or 'Hallway 24: Audio Horror' if taken), bundle ID #{APP_ID}, SKU hallway24. Then run this again.")
     end
 
+    # Game Center has to be switched on for the bundle ID, and the signing profile made again after that,
+    # or the build fails with "profile doesn't include the Game Center capability".
+    bundle = Spaceship::ConnectAPI::BundleId.find(APP_ID)
+    has_game_center = bundle.get_capabilities.any? { |c| c.capability_type == "GAME_CENTER" }
+    unless has_game_center
+      bundle.create_capability(Spaceship::ConnectAPI::BundleIdCapability::Type::GAME_CENTER)
+      UI.success("✅ Turned on Game Center for #{APP_ID}")
+    end
+    new_profile = !has_game_center || ENV["FORCE_PROFILE"] == "1"
+    UI.message("Making a new signing profile (with Game Center)") if new_profile
+
     match(
       type: "appstore",
       app_identifier: APP_ID,
       git_url: CERTS_REPO,
       git_basic_authorization: Base64.strict_encode64("x-access-token:#{ENV.fetch('CLEAN_CERTS_TOKEN')}"),
       api_key: api_key,
-      readonly: false
+      readonly: false,
+      force: new_profile
     )
     team_id = ENV.fetch("sigh_#{APP_ID}_appstore_team-id")
     profile = ENV.fetch("sigh_#{APP_ID}_appstore_profile-name")

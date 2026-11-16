@@ -5,6 +5,12 @@ name: Hallway 24
 on:
   push:
   workflow_dispatch:
+    inputs:
+      new_profile:
+        description: Make a new signing profile (only if signing complains about a missing capability)
+        type: choice
+        default: "no"
+        options: ["no", "yes"]
 
 jobs:
   core-tests:
@@ -113,7 +119,7 @@ jobs:
           xcodegen generate
 
       - name: Build, sign and upload to TestFlight
-        run: bundle exec fastlane beta
+        run: FORCE_PROFILE=${{ inputs.new_profile == 'yes' && '1' || '0' }} bundle exec fastlane beta
 
       - name: Remove keys
         if: always()
