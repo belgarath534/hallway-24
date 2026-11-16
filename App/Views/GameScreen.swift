@@ -66,6 +66,9 @@ struct StatusBar: View {
                 Image(systemName: "circle.circle.fill").foregroundStyle(.yellow)
             }
             .padding(.horizontal)
+            .padding(.vertical, 8)
+            .glassPanel(cornerRadius: 22)
+            .padding(.horizontal, 8)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(t("Hour \(run.hour), door \(run.step) of \(Game.roomsPerHour). \(run.health) \(run.health == 1 ? "heart" : "hearts"). \(run.tokens) tokens.",
                                   "Hora \(run.hour), porta \(run.step) de \(Game.roomsPerHour). \(run.health) \(run.health == 1 ? "coração" : "corações"). \(run.tokens) fichas.")
@@ -93,7 +96,7 @@ struct CaptionBox: View {
             }
             .padding()
             .frame(maxWidth: .infinity)
-            .background(.black.opacity(0.55), in: RoundedRectangle(cornerRadius: 14))
+            .glassPanel()
             .padding(.horizontal)
             // VoiceOver users hear the Host directly; reading captions too would talk over the game.
             .accessibilityHidden(true)
@@ -113,7 +116,7 @@ struct BottomButtons: View {
             Button(settings.t("Skip", "Pular")) { controller.input(.skip) }
                 .disabled(!controller.talking)
         }
-        .buttonStyle(.bordered)
+        .glassButton()
         .padding()
     }
 }
@@ -158,7 +161,7 @@ struct HallwayView: View {
             } label: {
                 Label(t("Listen again", "Escutar de novo"), systemImage: "ear").frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .glassButton()
             .controlSize(.large)
             .padding(.horizontal)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
@@ -198,7 +201,7 @@ struct DoorButton: View {
             }
             .frame(maxWidth: .infinity, minHeight: 150)
         }
-        .buttonStyle(.borderedProminent)
+        .glassProminentButton()
         .tint(Color(red: 0.35, green: 0.2, blue: 0.12))
         .accessibilityLabel(title)
     }
@@ -215,7 +218,7 @@ struct ItemButton: View {
         Button(action: action) {
             Text("\(name) (\(count))").frame(maxWidth: .infinity).lineLimit(2).minimumScaleFactor(0.8)
         }
-        .buttonStyle(.bordered)
+        .glassButton()
         .disabled(count == 0)
         .accessibilityLabel(settings.t("Use \(name). You have \(count).", "Usar \(name). Você tem \(count)."))
         .accessibilityHint(item.about(settings.language))
@@ -313,10 +316,10 @@ struct PracticeOverView: View {
             } label: {
                 Label(t("Try again", "Tentar de novo"), systemImage: "arrow.counterclockwise").frame(maxWidth: .infinity, minHeight: 60)
             }
-            .buttonStyle(.borderedProminent)
+            .glassProminentButton()
             .padding(.horizontal)
             Button(t("Back to the Practice Room", "Voltar à Sala de Treino"), action: close)
-                .buttonStyle(.bordered)
+                .glassButton()
             Spacer()
         }
     }
