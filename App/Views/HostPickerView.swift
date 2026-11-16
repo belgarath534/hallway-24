@@ -21,6 +21,7 @@ struct HostPickerView: View {
             }
             ForEach(Host.all(settings.language), id: \.self) { host in
                 Section(host.name) {
+                    HostPicture(host: host)
                     Text(host.about).foregroundStyle(.secondary)
                     Button {
                         listen(host)
