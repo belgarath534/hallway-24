@@ -164,5 +164,5 @@ music("mus_calm", "Clean Soul.mp3")
 music("mus_win", "Lasting Hope.mp3")
 music("mus_lose", "Darkness Speaks.mp3")
 # The Sleeper: quieter than the rest, so the snoring is always easy to hear.
-ffmpeg(["Unseen Horrors.mp3"], "[0:a]loudnorm=I=-24:TP=-2[o]", os.path.join(MUSIC, "mus_sleeper.m4a"), mono=False, bitrate="96k")
+ffmpeg(["Come Play with Me.mp3"], "[0:a]dynaudnorm=f=500:g=15,loudnorm=I=-24:TP=-2[o]", os.path.join(MUSIC, "mus_sleeper.m4a"), mono=False, bitrate="96k")
 print("Done.")
