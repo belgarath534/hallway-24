@@ -67,9 +67,9 @@ public struct Encounter: Sendable {
     var hit: [Bool] = []
     // The Sleeper
     static let spots: [Input] = [.left, .right, .up, .down]
-    /// What's hidden in each spot, two layers deep: a number (1 to 6), or 0 for nothing.
-    var hidden: [[Int]] = []
-    var searchedLayers: [Int] = [0, 0, 0, 0]
+    /// What's hidden in each place (left, right, ahead, behind): a number (1 to 6), or 0 for nothing.
+    var hidden: [Int] = []
+    var searched: [Bool] = [false, false, false, false]
     var code: [Int] = []
     var needed = 3
     var dialing = false
@@ -196,7 +196,7 @@ public struct Encounter: Sendable {
                 guard dialed.count < code.count, taps < code[dialed.count] else { return nil }
                 return (.tap, lastAction + 0.35, .infinity, false)
             }
-            guard let i = searchedLayers.firstIndex(where: { $0 < 2 }) else { return nil }
+            guard let i = searched.firstIndex(of: false) else { return nil }
             return (Self.spots[i], lastAction + 1.2, .infinity, false)
         case .lights:
             guard let i = ticks.indices.first(where: { $0 >= 2 && !hit[$0] && ticks[$0] + tolerance > time }) else { return nil }
@@ -697,12 +697,11 @@ public struct Encounter: Sendable {
         let d = difficulty
         end = .infinity
         needed = guided || d < 0.4 ? 2 : 3
-        // Hide the numbers in different spots and layers; the rest is empty.
-        var slots = (0..<8).map { $0 }
-        hidden = Array(repeating: [0, 0], count: 4)
+        // Hide the numbers in different places; the rest are empty.
+        var places = [0, 1, 2, 3]
+        hidden = [0, 0, 0, 0]
         for _ in 0..<needed {
-            let k = slots.remove(at: rng.int(0, slots.count - 1))
-            hidden[k / 2][k % 2] = rng.int(1, 6)
+            hidden[places.remove(at: rng.int(0, places.count - 1))] = rng.int(1, 6)
         }
         at(0, .music(.sleeper))
         at(0.3, .caption(t2("Snoring. Search while it sleeps. Freeze when it stops.", "Roncos. Procure enquanto ele dorme. Congele quando parar.")))
@@ -740,7 +739,7 @@ public struct Encounter: Sendable {
             guard input == .tap else { return [] }
             taps += 1
             judgeAt = time + 1.5
-            return [.play(SoundCue(.dialClick, volume: 0.7)), .haptic(.light), .caption("\(taps)")]
+            return [.play(SoundCue(.dialClick)), .haptic(.light), .caption("\(taps)")]
         }
         if input == .tap {
             // Whispers the numbers found so far.
@@ -756,21 +755,22 @@ public struct Encounter: Sendable {
         guard let i = Self.spots.firstIndex(of: input) else { return [] }
         let (p, behind) = pan(input)
         var out: [GameEvent] = [.play(SoundCue(.search, pan: p, volume: 0.6, behind: behind)), .haptic(.light)]
-        guard searchedLayers[i] < 2 else {
-            return out + [.caption(t2("Nothing more there.", "Não tem mais nada aí."))]
+        guard !searched[i] else {
+            return out + [.caption(t2("Already searched.", "Já procurou aí."))]
         }
-        let n = hidden[i][searchedLayers[i]]
-        searchedLayers[i] += 1
+        let n = hidden[i]
+        searched[i] = true
         guard n > 0 else { return out + [.caption(t2("Nothing.", "Nada."))] }
         code.append(n)
         out += [.play(SoundCue(.noteFound, pan: p, volume: 0.7, behind: behind)),
                 .caption(t2("A note: \(n)", "Um bilhete: \(n)"))]
         at(time + 0.6, .play(SoundCue(.num(n), pan: p * 0.5, volume: 0.9, behind: behind)))
         if code.count == needed {
+            // The Host tells you it's time for the phone. It stays asleep while the Host talks.
             dialing = true
             taps = 0
-            at(time + 1.6, .caption(t2("That's every number. Dial: one tap for each number, then wait.",
-                                       "Esses são todos os números. Disque: um toque para cada número, depois espere.")))
+            at(time + 1.6, .say("sleeper_dial"))
+            nextStir = max(nextStir, time + 9)
         }
         schedule.sort { $0.time < $1.time }
         return out
@@ -808,8 +808,11 @@ public struct Encounter: Sendable {
             let want = code[dialed.count]
             if taps == want {
                 dialed.append(taps)
+                out += [.play(SoundCue(.dialReturn, volume: 0.6)), .caption(t2("Dialed \(taps).", "Discou \(taps)."))]
+                // A whisper of the number you just dialed.
+                at(time + 0.7, .play(SoundCue(.num(taps), volume: 0.8)))
+                schedule.sort { $0.time < $1.time }
                 taps = 0
-                out.append(.play(SoundCue(.dialReturn, volume: 0.6)))
                 if dialed.count == code.count {
                     outcome = .survived
                     out += [.play(SoundCue(.unlock)), .caption(t2("The front desk answers. The lock clicks open. Tiptoe out.",

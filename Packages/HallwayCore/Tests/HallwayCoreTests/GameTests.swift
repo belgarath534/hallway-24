@@ -470,13 +470,13 @@ final class EncounterTests: XCTestCase {
         XCTAssertEqual(e.mistakes, 1)
     }
 
-    /// Searching finds exactly the numbers it needs, and every spot can be searched twice.
+    /// The numbers it needs are hidden in different places.
     func testSleeperHidesTheNumbers() {
         for seed in 1...20 as ClosedRange<UInt64> {
             let e = Encounter(creature: .sleeper, difficulty: 1, rng: RNG(seed: seed))
-            XCTAssertEqual(e.hidden.flatMap { $0 }.filter { $0 > 0 }.count, 3)
+            XCTAssertEqual(e.hidden.filter { $0 > 0 }.count, 3)
             let easy = Encounter(creature: .sleeper, difficulty: 0.2, rng: RNG(seed: seed))
-            XCTAssertEqual(easy.hidden.flatMap { $0 }.filter { $0 > 0 }.count, 2)
+            XCTAssertEqual(easy.hidden.filter { $0 > 0 }.count, 2)
         }
     }
 }

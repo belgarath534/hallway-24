@@ -143,13 +143,22 @@ def bandnoise(seconds, lo, hi):
 
 
 def snore_sound():
-    x_in = t(1.3)
-    rattle = 1 + 0.8 * np.sin(2 * np.pi * 28 * x_in)
-    inhale = bandnoise(1.3, 70, 700) * rattle * np.sin(np.pi * x_in / 1.3) ** 1.5
-    inhale += 0.5 * np.sin(2 * np.pi * np.cumsum(55 + 10 * x_in) / SR) * rattle * np.sin(np.pi * x_in / 1.3) ** 2
-    x_out = t(0.9)
-    exhale = bandnoise(0.9, 150, 1200) * 0.35 * np.sin(np.pi * x_out / 0.9) ** 2
-    return np.concatenate([inhale, np.zeros(int(SR * 0.1)), exhale])
+    """A real-sounding snore: the soft palate flapping (a buzzy ~30 Hz rattle) shaped like a voice,
+    with breathy noise on top, so it stays clear over music. Then a soft breath out."""
+    x_in = t(1.4)
+    env = np.sin(np.pi * x_in / 1.4) ** 1.2
+    flap = 30 + 6 * np.sin(2 * np.pi * 0.7 * x_in)
+    phase = np.cumsum(flap) / SR
+    pulses = np.maximum(0, np.sin(2 * np.pi * phase)) ** 6          # sharp flaps
+    buzz = np.convolve(pulses, np.ones(30) / 30, mode="same")
+    tone = np.zeros_like(x_in)
+    for f, g in ((180, 1.0), (520, 0.8), (1100, 0.5), (2300, 0.25)):   # resonances of the throat and mouth
+        tone += g * np.sin(2 * np.pi * f * x_in) * buzz
+    breath = bandnoise(1.4, 300, 3500) * (0.25 + buzz)
+    inhale = (tone + 0.6 * breath) * env
+    x_out = t(1.0)
+    exhale = bandnoise(1.0, 250, 2500) * 0.3 * np.sin(np.pi * x_out / 1.0) ** 2
+    return np.concatenate([inhale, np.zeros(int(SR * 0.15)), exhale])
 
 
 def creak(seconds=0.7):
