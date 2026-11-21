@@ -190,8 +190,7 @@ try:
         else:
             ch_id = call("POST", "/gameCenterChallenges", json={"data": {"type": "gameCenterChallenges",
                          "attributes": {"referenceName": c["reference"], "vendorIdentifier": c["vendor"],
-                                        "challengeType": "LEADERBOARD", "repeatable": True,
-                                        "allowedDurations": ["ONE_DAY", "THREE_DAYS", "ONE_WEEK"]},
+                                        "challengeType": "LEADERBOARD", "repeatable": True},
                          "relationships": {"gameCenterDetail": rel("gameCenterDetails", detail_id),
                                            "leaderboard": rel("gameCenterLeaderboards", boards[c["leaderboard"]]["id"])}}})["data"]["id"]
             print("Created challenge", c["reference"])
