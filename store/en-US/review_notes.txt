@@ -1,5 +1,31 @@
-Hallway 24 is an audio game designed for blind and visually impaired players, playable with VoiceOver. Please use headphones: every door plays a sound on the left or right.
+1. SCREEN RECORDING
+A screen recording made on a physical iPhone with the latest iOS is attached to this submission (App Review Information, Attachment). It starts at app launch and shows the typical flow: language and Host choice, the main menu, a night with door choices, creature encounters, the shop, and the Practice Room. The app has no accounts, no login, no user-generated content and no paid content.
 
-How to play: choose a Host, then Start the Night. In the hallway, tap Left door or Right door. When a creature appears, the full screen becomes a direct-touch play area (swipe left, right, up or down, or tap). The Practice Room in the main menu lets you try each creature without losing.
+2. PURPOSE AND AUDIENCE
+Hallway 24 is an audio horror game made first for blind and visually impaired players, and playable by sighted players too. Most mobile games depend on sight; this one is played entirely by sound and works fully with VoiceOver. The player stays in a hallway for 24 in-game hours, choosing between two doors each time by listening to what is behind them, and survives creatures and sound puzzles by listening carefully. Every screen also has text captions and pictures with VoiceOver descriptions. Audience: blind and low-vision gamers first, and anyone who likes audio and horror games.
 
-No login, no in-app purchases, no ads, no data collection. Voices are generated with Kokoro and Chatterbox (open-source text-to-speech, Apache 2.0 and MIT licenses). Music by Kevin MacLeod under CC BY 4.0; sound effects are CC0 and CC BY 3.0, credited in the game (Credits screen).
+3. HOW TO USE IT
+- Headphones are recommended (sounds come from the left or right).
+- First launch: choose English or Portuguese, then choose a Host (the narrator voice).
+- Main menu: "Start the Night" begins a game. In the hallway, tap "Left door" or "Right door" after listening.
+- When a creature appears, the whole screen becomes a direct-touch play area: swipe or tap as the Host explains. Every new creature first gets three practice rounds.
+- "Practice Room" in the main menu lets you try any creature without losing.
+- Every 6 hours a shop opens where tokens buy items (in-game tokens only, never real money).
+- Settings: volume sliders, captions, vibration, 3D sound with headphones (with a test button).
+- No login, demo account or sample files are needed.
+
+4. EXTERNAL SERVICES
+- Apple Game Center (achievements, leaderboards, a challenge). Optional; the game works fully without signing in.
+- Apple App Intents (Siri and Shortcuts), on the device.
+Nothing else: no servers of our own, no analytics, no ads, no payments, no accounts, and no AI services while the app runs. All content is inside the app and works offline.
+
+5. REGIONS
+The app works the same in every region. It is available in English and Portuguese (Brazil); the player picks the language and all text and voices follow it.
+
+6. THIRD-PARTY MATERIAL AND LICENSES
+No regulated industry. All third-party material is used under its license and credited in the game (Credits screen):
+- Music: Kevin MacLeod (incompetech.com), Creative Commons Attribution 4.0.
+- Sound effects: OpenGameArt packs under CC0 and CC BY 3.0 (tcarisland, Little Robot Sound Factory, rubberduck, bart).
+- Voices: recorded ahead of time by the developer with Kokoro (Apache 2.0) and Chatterbox (MIT), open-source text-to-speech models that run offline. All characters and voices are original.
+- Pictures: made by the developer with Apple's Image Playground.
+- The game, its characters and creatures are original.
